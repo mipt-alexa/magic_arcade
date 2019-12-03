@@ -7,10 +7,10 @@ battle_filed = bf.BattleField(FIELD_WIDTH, FIELD_HEIGHT, 0)
 for i in range(FIELD_HEIGHT):
     for j in range(FIELD_WIDTH):
         if battle_filed.field[i][j].type == 'Cell':
-            s = 'draw ' + str(i) + ' ' + str(j) + ' ' + 'grey'
+            s = 'obj ' + str(i) + ' ' + str(j) + ' ' + 'grey'
             con.write_messages("server", s)
 mage = mg.Mage(0, 0)
-s = 'draw ' + str(0) + ' ' + str(0) + ' ' + 'red'
+s = 'obj ' + str(0) + ' ' + str(0) + ' ' + 'red'
 con.write_messages("server", s)
 
 
