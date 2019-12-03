@@ -6,7 +6,7 @@ from Cells_classes import Cell
 """
 
 
-class BatleField:
+class BatlleField:
     def __init__(self, width, height, obstacles_number):
         self.width = width
         self.height = height
