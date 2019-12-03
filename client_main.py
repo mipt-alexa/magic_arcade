@@ -20,6 +20,7 @@ field = tkinter.Canvas(root, width=window_width, height=window_height, bg="black
 field.pack(fill=tkinter.BOTH, expand=1)
 
 objects = []
+dictionary = {}
 
 
 class Cell:
@@ -27,6 +28,14 @@ class Cell:
         self.type = 'Cell'
         self.i = 0
         self.j = 0
+        self.color = ''
+
+
+class Object:
+    def __init__(self):
+        self.i = 0
+        self.j = 0
+        self.color = ''
 
 
 def read_from_file(input_filename):
@@ -60,12 +69,24 @@ def easy_read(line):
 
 
 def parse_sell_parameters(line, cell):
-
     cellparameters = line.split()
     if cellparameters[0] == "Cell":
         cell.type = cellparameters[0]
         cell.i = int(cellparameters[1])
         cell.j = int(cellparameters[2])
+        cell.color = cellparameters[3]
+
+
+def read_the_line(line):
+    print('длина = ', len(line))
+    list_of_words = line.split()
+    for i in range(1, len(list_of_words)):
+        if list_of_words[i] == 'obj':
+            a = Object()
+            list_of_words[i + 1] = a.i
+            list_of_words[i + 2] = a.j
+            list_of_words[i + 3] = a.color
+            objects.append(a)
 
 
 def draw_grid():
@@ -74,11 +95,14 @@ def draw_grid():
     for i in range(1, 10, 1):
         field.create_line(50*i , 0, 50*i, 500, fill='grey')
 
+
 def main():
-    line1 = 'Cell 3 4'
-    easy_read(line1)
+    line1 = 'Cell 3 4 orange'
+    line2 = 'obj 1 1 red'
+    read_the_line(line2)
     for obj in objects:
-        field.create_oval(50*obj.i, 50*obj.j, 50*obj.i + 50, 50*obj.j + 50, fill='white')
+        field.create_oval(50*obj.i, 50*obj.j, 50*obj.i + 50, 50*obj.j + 50, fill=obj.color)
+        print(obj.color)
     draw_grid()
     #field.update()
     #root.after(DT, main)
