@@ -4,7 +4,7 @@ def read_message(who):  # who - кто сообщение вызывает
     Отвечает за чтение сообщения
     """
     other = return_other(who)
-    file_for_readng = open("{}_.txt".format(other),'r',encoding = 'utf-8')
+    file_for_readng = open("{}_message.txt".format(other),'r',encoding = 'utf-8')
     message = file_for_readng.readlines
     file_for_readng.truncate()
     return message
@@ -15,7 +15,7 @@ def write_message(who, message):  # message - сообщение, которое
     """
     Отвечает за создание сообщения
     """
-    file_for_write = open("{}_.txt".format(who),'a')
+    file_for_write = open("{}_message.txt".format(who),'a')
     file_for_write.write(str(message) + '\n')
     
     
