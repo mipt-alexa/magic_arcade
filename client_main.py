@@ -23,10 +23,10 @@ objects = []
 
 
 class Cell:
-    def __init__(self, i, j):
+    def __init__(self):
         self.type = 'Cell'
-        self.i = i
-        self.j = j
+        self.i = 0
+        self.j = 0
 
 
 def read_from_file(input_filename):
@@ -51,25 +51,42 @@ def read_from_file(input_filename):
     return objects
 
 
-def parse_sell_parameters(line, sell):
+def easy_read(line):
+    object_type = line.split()[0]
+    if object_type == "Cell":
+        cell = Cell()
+        parse_sell_parameters(line, cell)
+        objects.append(cell)
+
+
+def parse_sell_parameters(line, cell):
 
     cellparameters = line.split()
-    if cellparameters[0] == "Sell":
-        sell.type = cellparameters[0]
-        sell.i = cellparameters[1]
-        sell.j = cellparameters[2]
+    if cellparameters[0] == "Cell":
+        cell.type = cellparameters[0]
+        cell.i = int(cellparameters[1])
+        cell.j = int(cellparameters[2])
 
+
+def draw_grid():
+    for i in range(1, 10, 1):
+        field.create_line(0, 50*i, 500, 50*i, fill='grey')
+    for i in range(1, 10, 1):
+        field.create_line(50*i , 0, 50*i, 500, fill='grey')
 
 def main():
+    line1 = 'Cell 3 4'
+    easy_read(line1)
     for obj in objects:
-        field.create_oval(50*obj.i, 50*obj.j , 50*obj.i + 50, 50*obj.j + 50, fill='white')
+        field.create_oval(50*obj.i, 50*obj.j, 50*obj.i + 50, 50*obj.j + 50, fill='white')
+    draw_grid()
     #field.update()
     #root.after(DT, main)
 
 
-a = Cell(1, 2)
-b = Cell(3, 7)
-objects.append(a)
-objects.append(b)
+# a = Cell()
+# b = Cell()
+# objects.append(a)
+# objects.append(b)
 main()
 root.mainloop()
