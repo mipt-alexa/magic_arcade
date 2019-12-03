@@ -78,14 +78,16 @@ def parse_sell_parameters(line, cell):
 
 
 def read_the_line(line):
-    print('длина = ', len(line))
+    print('длина ', len(line))
     list_of_words = line.split()
-    for i in range(1, len(list_of_words)):
-        if list_of_words[i] == 'obj':
+    print(len(list_of_words))
+    for k in range(0, len(list_of_words) - 1):
+        if list_of_words[k] == 'obj':
             a = Object()
-            list_of_words[i + 1] = a.i
-            list_of_words[i + 2] = a.j
-            list_of_words[i + 3] = a.color
+            a.i = int(list_of_words[k + 1])
+            a.j = int(list_of_words[k + 2])
+            a.color = list_of_words[k + 3]
+            print(a.color)
             objects.append(a)
 
 
@@ -98,9 +100,10 @@ def draw_grid():
 
 def main():
     line1 = 'Cell 3 4 orange'
-    line2 = 'obj 1 1 red'
+    line2 = 'obj 1 1 red obj 2 3 blue'
     read_the_line(line2)
     for obj in objects:
+        print(obj.color)
         field.create_oval(50*obj.i, 50*obj.j, 50*obj.i + 50, 50*obj.j + 50, fill=obj.color)
         print(obj.color)
     draw_grid()
