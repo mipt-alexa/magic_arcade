@@ -22,9 +22,9 @@ field.pack(fill=tkinter.BOTH, expand=1)
 objects = []
 
 
-class Sell:
+class Cell:
     def __init__(self, i, j):
-        self.type = 'Sell'
+        self.type = 'Cell'
         self.i = i
         self.j = j
 
@@ -37,10 +37,10 @@ def read_from_file(input_filename):
             if len(line.strip()) == 0 or line[0] == '#':
                 continue  # пустые строки и строки-комментарии пропускаем
             object_type = line.split()[0]
-            if object_type == "Sell":
-                sell = Sell()
-                parse_sell_parameters(line, sell)
-                objects.append(sell)
+            if object_type == "Cell":
+                cell = Cell()
+                parse_sell_parameters(line, cell)
+                objects.append(cell)
             # elif object_type == "Planet":
             #     planet = Planet()
             #     parse_planet_parameters(line, planet)
@@ -53,11 +53,11 @@ def read_from_file(input_filename):
 
 def parse_sell_parameters(line, sell):
 
-    sellparameters = line.split()
-    if sellparameters[0] == "Sell":
-        sell.type = sellparameters[0]
-        sell.i = sellparameters[1]
-        sell.j = sellparameters[2]
+    cellparameters = line.split()
+    if cellparameters[0] == "Sell":
+        sell.type = cellparameters[0]
+        sell.i = cellparameters[1]
+        sell.j = cellparameters[2]
 
 
 def main():
@@ -67,8 +67,8 @@ def main():
     #root.after(DT, main)
 
 
-a = Sell(1, 2)
-b = Sell(3,7)
+a = Cell(1, 2)
+b = Cell(3, 7)
 objects.append(a)
 objects.append(b)
 main()
