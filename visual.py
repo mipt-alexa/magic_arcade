@@ -5,13 +5,6 @@ from Cells_classes import *
 from Spell_classes import *
 
 
-DT = 0       """тик времени"""
-
-header_font = "Arial-16"         """Шрифт в заголовке"""
-
-window_width = 500          """Ширина окна"""
-
-window_height = 500      """Высота окна"""
 
 
 def create_field_image():
