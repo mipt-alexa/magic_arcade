@@ -7,11 +7,12 @@ from Cells_classes import Cell
 
 
 class BattleField:
-    def __init__(self, width, height, obstacles_number):
+    def __init__(self, width, height, id, obstacles_number):
         self.width = width
         self.height = height
         self.field = [[]]
         self.obstacles = [[]]
+        self.id = id
         for i in range(height):
             self.field.append([])
             for j in range(width):
