@@ -29,8 +29,13 @@ class Object:
         self.j = 0
         self.color = ''
 
+    def draw(self):
+        field.create_oval(50*self.i, 50*self.j, 50*self.i - 50, 50*self.j - 50, fill=self.color)
+
+
 
 def read_the_line(line):
+    """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
     list_of_words = line.split()
     if list_of_words[0] == 'obj':
             a = Object()
@@ -48,7 +53,7 @@ def draw_grid():
 
 
 def click_processing(event):
-    """Обрабывает данные от клика. Дописывает в строку, строку в массив """
+    """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
     event_i = event.x // 50 + 1
     event_j = event.y // 50 + 1
     message_to_server = 'click ' + str(event_i) + ' ' + str(event_j) + ' '
@@ -73,8 +78,7 @@ def main():
 
     binding()
     for obj in objects:
-        field.create_oval(50*obj.i, 50*obj.j, 50*obj.i - 50, 50*obj.j - 50, fill=obj.color)
-
+        obj.draw()
 
     field.update()
     root.after(DT, main)
