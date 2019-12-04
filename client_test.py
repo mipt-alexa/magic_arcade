@@ -5,7 +5,9 @@ root = tk.Tk()
 
 
 def message_catcher():
-    con.read_message("server")
-    root.after(message_catcher, 30)
+    print(con.read_message("client"))
+    root.after(30, message_catcher)
+
 
 message_catcher()
+root.mainloop()
