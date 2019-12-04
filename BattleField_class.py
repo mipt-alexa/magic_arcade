@@ -15,7 +15,7 @@ class BattleField:
         for i in range(height):
             self.field.append([])
             for j in range(width):
-                cell = Cell
+                cell = Cell()
                 self.field[i].append(cell)
         for i in range(obstacles_number):
             pass
