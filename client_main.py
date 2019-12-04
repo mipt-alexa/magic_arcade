@@ -4,7 +4,6 @@ import time
 from tkinter.filedialog import *
 
 
-
 DT = 10
 """тик времени"""
 header_font = "Arial-16"
