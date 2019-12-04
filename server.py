@@ -47,7 +47,7 @@ class GameApp:
                                 self.game_status = 'player2_turn'
                     if splitted_message[0] == 'key':
                         key_number = int(splitted_message[1])
-                        pass
+                        self.action_state = 'spell' + str(key_number)
 
                 elif self.game_status == 'player2_turn':
                     splitted_message = message.split()
@@ -60,7 +60,7 @@ class GameApp:
                                 self.game_status = 'player1_turn'
                     if splitted_message[0] == 'key':
                         key_number = int(splitted_message[1])
-                        pass
+                        self.action_state = 'spell'+str(key_number)
         root.after(10, self.update)
 
 
