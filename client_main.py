@@ -1,6 +1,7 @@
 import tkinter
 import math
 import time
+import random as rnd
 from tkinter.filedialog import *
 
 
@@ -31,7 +32,6 @@ class Object:
 
     def draw(self):
         field.create_oval(50*self.i, 50*self.j, 50*self.i - 50, 50*self.j - 50, fill=self.color)
-
 
 
 def read_the_line(line):
@@ -70,8 +70,9 @@ def get_from_server():
 
 
 def send_to_server():
-    """Отправляет массив строк на сервер"""
+    """Отправляет массив строк на сервер, очищает массив"""
     pass
+
 
 
 def main():
@@ -79,10 +80,10 @@ def main():
     binding()
     for obj in objects:
         obj.draw()
+        objects.remove(obj)
 
     field.update()
     root.after(DT, main)
-
 
 
 
