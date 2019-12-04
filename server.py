@@ -33,34 +33,34 @@ class GameApp:
         self.game_status = 'player1_turn'
 
     def update(self):
-        message = catch_message()
-        print('update!')
-        if message != '':
-            splitted_message = message.split()
-            if self.game_status == 'player1_turn':
-                if splitted_message[0] == 'click':
-                    click_x = int(splitted_message[1])
-                    click_y = int(splitted_message[2])
-                    if self.action_state == 'walk':
-                        if self.mage1.check_move(click_x, click_y):
-                            self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
-                            self.game_status = 'player2_turn'
-                if splitted_message[0] == 'key':
-                    key_number = int(splitted_message[1])
-                    pass
-
-            elif self.game_status == 'player2_turn':
+        message_list = catch_message()
+        for message in message_list:
+            if message != '':
                 splitted_message = message.split()
-                if splitted_message[0] == 'click':
-                    click_x = int(splitted_message[1])
-                    click_y = int(splitted_message[2])
-                    if self.action_state == 'walk':
-                        if self.mage2.check_move(click_x, click_y):
-                            self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
-                            self.game_status = 'player1_turn'
-                if splitted_message[0] == 'key':
-                    key_number = int(splitted_message[1])
-                    pass
+                if self.game_status == 'player1_turn':
+                    if splitted_message[0] == 'click':
+                        click_x = int(splitted_message[1])
+                        click_y = int(splitted_message[2])
+                        if self.action_state == 'walk':
+                            if self.mage1.check_move(click_x, click_y):
+                                self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
+                                self.game_status = 'player2_turn'
+                    if splitted_message[0] == 'key':
+                        key_number = int(splitted_message[1])
+                        pass
+
+                elif self.game_status == 'player2_turn':
+                    splitted_message = message.split()
+                    if splitted_message[0] == 'click':
+                        click_x = int(splitted_message[1])
+                        click_y = int(splitted_message[2])
+                        if self.action_state == 'walk':
+                            if self.mage2.check_move(click_x, click_y):
+                                self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
+                                self.game_status = 'player1_turn'
+                    if splitted_message[0] == 'key':
+                        key_number = int(splitted_message[1])
+                        pass
         root.after(10, self.update)
 
 
