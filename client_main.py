@@ -4,8 +4,7 @@ import time
 from tkinter.filedialog import *
 
 
-
-DT = 10
+DT = 1
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -20,15 +19,8 @@ field = tkinter.Canvas(root, width=window_width, height=window_height, bg="black
 field.pack(fill=tkinter.BOTH, expand=1)
 
 objects = []
-dictionary = {}
-
-
-class Cell:
-    def __init__(self):
-        self.type = 'Cell'
-        self.i = 0
-        self.j = 0
-        self.color = ''
+messages_to_send =[]
+message_to_server = ''
 
 
 class Object:
@@ -37,57 +29,19 @@ class Object:
         self.j = 0
         self.color = ''
 
+    def draw(self):
+        field.create_oval(50*self.i, 50*self.j, 50*self.i - 50, 50*self.j - 50, fill=self.color)
 
-def read_from_file(input_filename):
-
-    global objects
-    with open(input_filename) as input_file:
-        for line in input_file:
-            if len(line.strip()) == 0 or line[0] == '#':
-                continue  # пустые строки и строки-комментарии пропускаем
-            object_type = line.split()[0]
-            if object_type == "Cell":
-                cell = Cell()
-                parse_sell_parameters(line, cell)
-                objects.append(cell)
-            # elif object_type == "Planet":
-            #     planet = Planet()
-            #     parse_planet_parameters(line, planet)
-            #     objects.append(planet)
-            # else:
-            #     print("Unknown space object", object_type)
-
-    return objects
-
-
-def easy_read(line):
-    object_type = line.split()[0]
-    if object_type == "Cell":
-        cell = Cell()
-        parse_sell_parameters(line, cell)
-        objects.append(cell)
-
-
-def parse_sell_parameters(line, cell):
-    cellparameters = line.split()
-    if cellparameters[0] == "Cell":
-        cell.type = cellparameters[0]
-        cell.i = int(cellparameters[1])
-        cell.j = int(cellparameters[2])
-        cell.color = cellparameters[3]
 
 
 def read_the_line(line):
-    print('длина ', len(line))
+    """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
     list_of_words = line.split()
-    print(len(list_of_words))
-    for k in range(0, len(list_of_words) - 1):
-        if list_of_words[k] == 'obj':
+    if list_of_words[0] == 'obj':
             a = Object()
-            a.i = int(list_of_words[k + 1])
-            a.j = int(list_of_words[k + 2])
-            a.color = list_of_words[k + 3]
-            print(a.color)
+            a.i = int(list_of_words[1])
+            a.j = int(list_of_words[2])
+            a.color = list_of_words[3]
             objects.append(a)
 
 
@@ -98,22 +52,40 @@ def draw_grid():
         field.create_line(50*i , 0, 50*i, 500, fill='grey')
 
 
+def click_processing(event):
+    """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
+    event_i = event.x // 50 + 1
+    event_j = event.y // 50 + 1
+    message_to_server = 'click ' + str(event_i) + ' ' + str(event_j) + ' '
+    messages_to_send.append(message_to_server)
+
+
+def binding():
+    field.bind('<Button-1>', click_processing)
+
+
+def get_from_server():
+    """Получает массив строк(?) от сервер"""
+    pass
+
+
+def send_to_server():
+    """Отправляет массив строк на сервер"""
+    pass
+
+
 def main():
-    line1 = 'Cell 3 4 orange'
-    line2 = 'obj 1 1 red obj 2 3 blue'
-    read_the_line(line2)
+
+    binding()
     for obj in objects:
-        print(obj.color)
-        field.create_oval(50*obj.i, 50*obj.j, 50*obj.i + 50, 50*obj.j + 50, fill=obj.color)
-        print(obj.color)
-    draw_grid()
-    #field.update()
-    #root.after(DT, main)
+        obj.draw()
+
+    field.update()
+    root.after(DT, main)
 
 
-# a = Cell()
-# b = Cell()
-# objects.append(a)
-# objects.append(b)
+
+
+draw_grid()
 main()
 root.mainloop()

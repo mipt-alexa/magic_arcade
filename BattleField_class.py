@@ -9,6 +9,7 @@ from Cells_classes import Cell
  
 class BattleField:
      def __init__(self, width, height, obstacles_number):
+ 
         self.width = width
         self.height = height
         self.field = [[]]
