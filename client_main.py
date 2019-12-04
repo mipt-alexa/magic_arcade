@@ -53,7 +53,6 @@ def click_processing(event):
     event_j = event.y // 50 + 1
     message_to_server = 'click ' + str(event_i) + ' ' + str(event_j) + ' '
     messages_to_send.append(message_to_server)
-    testing()
 
 
 def binding():
