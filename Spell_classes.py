@@ -13,6 +13,9 @@ class Spell:
 
 
 class DirectSpell(Spell):
+    """
+    Класс направленного заклинания, которое применяется на некоторый объект (маг ил препятствие) или клетку
+    """
     def __init__(self, range):
         super().__init__()
         self.range = range
@@ -20,22 +23,27 @@ class DirectSpell(Spell):
 
 
 class AttackDirectSpell(DirectSpell):
-    def __init__(self, health_damage, energy_damage):
+    """
+    Направленное заклинание, наносящее урон
+    """
+    def __init__(self, health_damage, energy_damage, destination):
         super().__init__()
+        self.destination = destination # тип объекта на который может быть направленно заклинание(Mage, Obstacle, Both)
         self.health_damage = health_damage
         self.energy_damage = energy_damage
 
-    def cast(self, mage, obj):
-        if (mage.x - obj.x)**2 + (mage.y - obj.y)**2 <= self.range**2:
-            obj.health -= self.health_damage
-            obj.energy -= self.energy_damage
-
 
 class DefendDirectSpell(DirectSpell):
+    """
+    Защищающее направленное заклинание, например создает препятствие в выбранной клетке
+    """
     pass
 
 
 class StateSpell(Spell):
+    """
+    Заклинание состояния. не имеет направления. Пример заклинани: увеличивает здоровье игрока
+    """
     def __init__(self):
         super().__init__()
         self.spell_type = 'state'

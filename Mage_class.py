@@ -21,6 +21,12 @@ class Mage:
             self.y += dy
             self.energy -= STEP_ENERGY
 
+    def check_move(self, click_x, click_y):
+        if abs(click_x - self.x) <= 1 and abs(click_y - self.y) <= 1:
+            return True
+        else:
+            return False
+
     def check_spell(self, spell, battle_field=None, obj=None):
         """
         метод проверяет, может ли маг вызвать заклинание.
