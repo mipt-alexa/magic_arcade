@@ -5,8 +5,7 @@ import random as rnd
 from tkinter.filedialog import *
 
 
-
-DT = 30
+DT = 1
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -21,19 +20,8 @@ field = tkinter.Canvas(root, width=window_width, height=window_height, bg="black
 field.pack(fill=tkinter.BOTH, expand=1)
 
 objects = []
-dictionary = {}
-
-
-def catch_message():
-    root.after(DT, catch_message)
-
-
-class Cell:
-    def __init__(self):
-        self.type = 'Cell'
-        self.i = 0
-        self.j = 0
-        self.color = ''
+messages_to_send =[]
+message_to_server = ''
 
 
 class Object:
