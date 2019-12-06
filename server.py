@@ -45,10 +45,12 @@ class GameApp:
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
                     message = 'obj' + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
                     con.write_message('server', message)
-                    #self.game_status = 'player2_turn'
-            if turn == 'player1':
+                    self.game_status = 'player2_turn'
+            if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
+                    message = 'obj' + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
+                    con.write_message('server', message)
                     self.game_status = 'player1_turn'
 
     def update(self):
