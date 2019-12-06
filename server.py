@@ -66,7 +66,7 @@ class GameApp:
 
 game = GameApp(10, 10)
 game.initialise_game()
-game.update()
+#game.update()
 root.mainloop()
 
 
