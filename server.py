@@ -2,12 +2,13 @@ import BattleField_class as bf
 import Mage_class as mg
 import connection as con
 import tkinter as tk
+import time
 
 root = tk.Tk()
-
+DT = 1
 
 def read_message():
-    list_of_messages = con.read_message('client')
+    list_of_messages = con.read_message('server')
     return list_of_messages
 
 
@@ -20,6 +21,7 @@ class GameApp:
         self.action_state = 'walk'
         self.mage2 = mg.Mage(field_height - 1, field_width - 1)
         self.game_status = 'none'
+        self.id_list = [0]
 
     def initialise_game(self):
         for i in range(self.field_height):
@@ -27,6 +29,7 @@ class GameApp:
                 if self.battle_filed.field[i][j].type == 'Cell':
                     message = 'obj ' + str(i) + ' ' + str(j) + ' ' + 'grey'
                     con.write_message("server", message)
+                    time.sleep(0.005)
         message = 'obj ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
         con.write_message('server', message)
         message = 'obj ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
@@ -36,12 +39,13 @@ class GameApp:
     def process_click_message(self, turn, splitted_message):
         click_x = int(splitted_message[1])
         click_y = int(splitted_message[2])
-        print('click at' + str(click_x) + str(click_y))
         if self.action_state == 'walk':
             if turn == 'player1':
                 if self.mage1.check_move(click_x, click_y):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
-                    self.game_status = 'player2_turn'
+                    message = 'obj' + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
+                    con.write_message('server', message)
+                    #self.game_status = 'player2_turn'
             if turn == 'player1':
                 if self.mage2.check_move(click_x, click_y):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
@@ -50,6 +54,7 @@ class GameApp:
     def update(self):
         message_list = read_message()
         for message in message_list:
+            print(message)
             if message == '':
                 continue
             splitted_message = message.split()
@@ -67,10 +72,10 @@ class GameApp:
                 if splitted_message[0] == 'key':
                     key_number = int(splitted_message[1])
                     self.action_state = 'spell' + str(key_number)
-        root.after(10, self.update)
+        root.after(DT, self.update)
 
 
 game = GameApp(10, 10)
 game.initialise_game()
-# game.update()
+game.update()
 root.mainloop()

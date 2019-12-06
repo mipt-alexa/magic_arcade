@@ -5,7 +5,7 @@ import random as rnd
 from tkinter.filedialog import *
 import connection as con
 
-DT = 10
+DT = 1
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -33,9 +33,9 @@ def send_message(message):
 
 def click_processing(event):
     """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
-    event_i = event.x // 50
-    event_j = event.y // 50
-    message_to_server = 'click ' + str(event_i) + ' ' + str(event_j) + ' '
+    event_x = event.x // 50
+    event_y = event.y // 50
+    message_to_server = 'click ' + str(event_x) + ' ' + str(event_y) + ' '
     send_message(message_to_server)
 
 
@@ -72,15 +72,14 @@ class ClientGameApp:
         list_of_messages = read_message()
         #print(len(list_of_messages))
         if len(list_of_messages) > 0:
-            print("!")
             for message in list_of_messages:
-                print(message)
                 if message == '':
                     continue
                 self.process_message(message)
                 for obj in self.objects:
                     self.draw_object(obj)
         self.root.after(DT, self.update)
+
 
 
 app = ClientGameApp()
