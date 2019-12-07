@@ -8,12 +8,13 @@ STEP_ENERGY = 20
 
 
 class Mage:
-    def __init__(self, x, y, health=BASIC_HEALTH, energy=BASIC_ENERGY):
+    def __init__(self, x, y, client_id, health=BASIC_HEALTH, energy=BASIC_ENERGY):
         self.type = 'Mage'
         self.x = x
         self.y = y
         self.health = health
         self.energy = energy
+        self.client_id = client_id
 
     def move(self, dx, dy):
         if self.energy >= STEP_ENERGY:
@@ -22,7 +23,7 @@ class Mage:
             self.energy -= STEP_ENERGY
 
     def check_move(self, click_x, click_y):
-        if (abs(click_x - self.x) == 1 and not abs(click_y - self.y) == 1) or (not abs(click_x - self.x) == 1 and abs(click_y - self.y) == 1):
+        if (abs(click_x - self.x) == 1 and abs(click_y - self.y) == 0) or (abs(click_x - self.x) == 0 and abs(click_y - self.y) == 1):
             return True
         else:
             return False

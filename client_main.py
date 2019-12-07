@@ -5,7 +5,7 @@ import random as rnd
 from tkinter.filedialog import *
 import connection as con
 
-DT = 1
+DT = 10
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -19,7 +19,9 @@ class Object:
     def __init__(self):
         self.x = 0
         self.y = 0
+        self.client_id = None
         self.color = ''
+        self.canvas_id = None
 
 
 def read_message():
@@ -44,20 +46,25 @@ class ClientGameApp:
         self.root = tkinter.Tk()
         self.field = tkinter.Canvas(self.root, width=window_width, height=window_height, bg="black")
         self.field.pack(fill=tkinter.BOTH, expand=1)
-        self.objects = []
+        self.objects = {}
 
     def draw_object(self, obj):
-        self.field.create_oval(50 * obj.x, 50 * obj.y, 50 * obj.x + 50, 50 * obj.y + 50, fill=obj.color)
+        canvas_id = self.field.create_oval(50 * obj.x, 50 * obj.y, 50 * obj.x + 50, 50 * obj.y + 50, fill=obj.color)
+        return canvas_id
 
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
         list_of_words = message.split()
         if list_of_words[0] == 'obj':
             a = Object()
-            a.x = int(list_of_words[1])
-            a.y = int(list_of_words[2])
-            a.color = list_of_words[3]
-            self.objects.append(a)
+            a.client_id = int(list_of_words[1])
+            a.x = int(list_of_words[2])
+            a.y = int(list_of_words[3])
+            a.color = list_of_words[4]
+            if self.objects.get(a.client_id) is not None:
+                self.field.delete(self.objects[a.client_id].canvas_id)
+            a.canvas_id = self.draw_object(a)
+            self.objects[a.client_id] = a
 
     def draw_grid(self):
         for i in range(1, 10, 1):
@@ -70,14 +77,11 @@ class ClientGameApp:
 
     def update(self):
         list_of_messages = read_message()
-        #print(len(list_of_messages))
         if len(list_of_messages) > 0:
             for message in list_of_messages:
                 if message == '':
                     continue
                 self.process_message(message)
-                for obj in self.objects:
-                    self.draw_object(obj)
         self.root.after(DT, self.update)
 
 
