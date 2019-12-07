@@ -5,7 +5,7 @@ import tkinter as tk
 import time
 
 root = tk.Tk()
-DT = 1
+DT = 10
 
 def read_message():
     list_of_messages = con.read_message('server')
@@ -38,7 +38,7 @@ class GameApp:
                 if self.battle_filed.field[i][j].type == 'Cell':
                     message = 'obj ' + str(self.battle_filed.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + 'grey'
                     con.write_message("server", message)
-                    time.sleep(0.005)
+                    #time.sleep(0.05)
         message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
         con.write_message('server', message)
         message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
@@ -54,16 +54,21 @@ class GameApp:
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
                     message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
                     con.write_message('server', message)
-                    self.game_status = 'player2_turn'
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
                     message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
                     con.write_message('server', message)
-                    self.game_status = 'player1_turn'
 
     def update(self):
         message_list = read_message()
+        if self.mage1.energy <= 0:
+            self.mage1.energy += 100
+            self.game_status = 'player2_turn'
+        elif self.mage2.energy <= 0:
+            self.mage2.energy += 100
+            self.game_status = 'player1_turn'
+        print(self.game_status)
         for message in message_list:
             print(message)
             if message == '':

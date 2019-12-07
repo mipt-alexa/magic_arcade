@@ -5,7 +5,7 @@ import random as rnd
 from tkinter.filedialog import *
 import connection as con
 
-DT = 1
+DT = 10
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -81,7 +81,6 @@ class ClientGameApp:
             for message in list_of_messages:
                 if message == '':
                     continue
-                print(message)
                 self.process_message(message)
         self.root.after(DT, self.update)
 
