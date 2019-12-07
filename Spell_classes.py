@@ -40,6 +40,14 @@ class DefendDirectSpell(DirectSpell):
     pass
 
 
+class Creat_obstacle_Spell(DirectSpell):
+    """
+    Заклинание, ставящее препятствие
+    """
+    def __init__(self, x, y):
+        super().__init__()
+        pass
+    
 class StateSpell(Spell):
     """
     Заклинание состояния. не имеет направления. Пример заклинани: увеличивает здоровье игрока
