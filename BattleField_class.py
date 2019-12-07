@@ -7,7 +7,7 @@ from Cells_classes import Cell
 
 
 class BattleField:
-    def __init__(self, width, height, obstacles_number):
+    def __init__(self, width, height, obstacles_number, id_giver):
         self.width = width
         self.height = height
         self.field = [[]]
@@ -15,7 +15,7 @@ class BattleField:
         for i in range(height):
             self.field.append([])
             for j in range(width):
-                cell = Cell()
+                cell = Cell(id_giver.new_id())
                 self.field[i].append(cell)
         for i in range(obstacles_number):
             pass
