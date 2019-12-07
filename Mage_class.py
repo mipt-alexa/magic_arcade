@@ -22,7 +22,7 @@ class Mage:
             self.energy -= STEP_ENERGY
 
     def check_move(self, click_x, click_y):
-        if abs(click_x - self.x) <= 1 and abs(click_y - self.y) <= 1:
+        if (abs(click_x - self.x) == 1 and not abs(click_y - self.y) == 1) or (not abs(click_x - self.x) == 1 and abs(click_y - self.y) == 1):
             return True
         else:
             return False
