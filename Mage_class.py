@@ -8,12 +8,13 @@ STEP_ENERGY = 20
 
 
 class Mage:
-    def __init__(self, x, y, health=BASIC_HEALTH, energy=BASIC_ENERGY):
+    def __init__(self, x, y, client_id, health=BASIC_HEALTH, energy=BASIC_ENERGY):
         self.type = 'Mage'
         self.x = x
         self.y = y
         self.health = health
         self.energy = energy
+        self.client_id = client_id
 
     def move(self, dx, dy):
         if self.energy >= STEP_ENERGY:

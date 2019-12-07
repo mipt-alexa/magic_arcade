@@ -16,12 +16,16 @@ class GameApp:
     def __init__(self, field_width, field_height):
         self.field_width = field_width
         self.field_height = field_height
-        self.battle_filed = bf.BattleField(field_width, field_height, 0)
-        self.mage1 = mg.Mage(0, 0)
-        self.action_state = 'walk'
-        self.mage2 = mg.Mage(field_height - 1, field_width - 1)
-        self.game_status = 'none'
         self.id_list = [0]
+        self.battle_filed = bf.BattleField(field_width, field_height, 0)
+        self.mage1 = mg.Mage(0, 0, None)
+        self.action_state = 'walk'
+        self.mage2 = mg.Mage(field_height - 1, field_width - 1, None)
+        self.game_status = 'none'
+
+    def new_id(self):
+        self.id_list.append((self.id_list[len(self.id_list)-1]+1) % 1000000)
+        return self.id_list[len(self.id_list)-1]
 
     def initialise_game(self):
         for i in range(self.field_height):
@@ -30,6 +34,8 @@ class GameApp:
                     message = 'obj ' + str(i) + ' ' + str(j) + ' ' + 'grey'
                     con.write_message("server", message)
                     time.sleep(0.005)
+        self.mage1.client_id = self.new_id()
+        self.mage2.client_id = self.new_id()
         message = 'obj ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
         con.write_message('server', message)
         message = 'obj ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
@@ -79,5 +85,7 @@ class GameApp:
 
 game = GameApp(10, 10)
 game.initialise_game()
+print(game.mage1.client_id)
+print(game.mage2.client_id)
 game.update()
 root.mainloop()
