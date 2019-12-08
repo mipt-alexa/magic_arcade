@@ -1,0 +1,14 @@
+key 1
+click 1 1 
+click 1 1 
+click 1 1 
+key 2
+click 1 1 
+click 1 1 
+key 1
+click 1 1 
+click 1 1 
+key t
+click 2 3 
+click 2 0 
+key t
