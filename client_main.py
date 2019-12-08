@@ -61,6 +61,8 @@ class ClientGameApp:
         self.health_bar2_id = None
         self.energy_bar1_id = None
         self.energy_bar2_id = None
+        self.player1_turn_id = None
+        self.player2_turn_id = None
 
     def draw_object(self, obj):
         canvas_id = self.field.create_oval(50 * obj.x, 50 * obj.y, 50 * obj.x + 50, 50 * obj.y + 50, fill=obj.color)
@@ -71,6 +73,18 @@ class ClientGameApp:
         self.health_bar2_id = self.interface.create_line(window_width - 200, 15, window_width, 15, width=15, fill='red')
         self.energy_bar1_id = self.interface.create_line(0, 35, 200, 35, width=15, fill='grey')
         self.energy_bar2_id = self.interface.create_line(window_width - 200, 35,  window_width, 35, width=15, fill='grey')
+
+    def draw_turn(self):
+        self.player1_turn_id = self.interface.create_rectangle(5, 55, 45, 95, fill='red')
+        self.player2_turn_id = self.interface.create_rectangle(window_width - 5, 55, window_width - 45, 95, fill='red')
+
+    def set_turn(self, player):
+        if player == 'player1':
+            self.interface.itemconfig(self.player1_turn_id, fill='green')
+            self.interface.itemconfig(self.player2_turn_id, fill='red')
+        if player == 'player2':
+            self.interface.itemconfig(self.player2_turn_id, fill='green')
+            self.interface.itemconfig(self.player1_turn_id, fill='red')
 
     def set_energy(self, player, energy):
         if player == 'player1':
@@ -101,7 +115,8 @@ class ClientGameApp:
             self.set_energy(list_of_words[1], int(list_of_words[2]))
         if list_of_words[0] == 'set_health':
             self.set_health(list_of_words[1], int(list_of_words[2]))
-
+        if list_of_words[0] == 'set_turn':
+            self.set_turn(list_of_words[1])
 
     def draw_grid(self):
         for i in range(1, 10, 1):
@@ -127,5 +142,6 @@ app = ClientGameApp()
 app.bind_all()
 app.draw_grid()
 app.draw_bars()
+app.draw_turn()
 app.update()
 app.root.mainloop()

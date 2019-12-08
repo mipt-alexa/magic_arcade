@@ -22,8 +22,7 @@ class BattleField:
             for j in range(width):
                 obstacle = None
                 self.obstacles[i].append(obstacle)
-                
-                
+
     def attack_obstacle(self, health_damage, x, y):
         """
         метод отвечает за поподание мага по препятствию
@@ -32,16 +31,14 @@ class BattleField:
             self.delete_obstacles(x, y)
         else:
             self.obstacles[x][y].health -= health_damage  # KISS
-            
-            
+
     def delete_obstacles(self, x, y):
         """
         метод отвечает за удаление препятствия
         """
         self.obstacles[x][y] = None
-        
-     
-    def creat_obstacles(self, x, y):
+
+    def creat_obstacles(self, x, y, id_giver):
         """
         метод отвечает за создание препятствия
         """
