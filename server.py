@@ -73,10 +73,11 @@ class GameApp:
             if turn == 'player1':
                 spell_target = None
                 if click_x == self.mage2.x and click_y == self.mage2.y:
-                    spell_target = self.mage1
+                    spell_target = self.mage2
                 if self.battle_filed.obstacles[click_y][click_x] is not None:
                     spell_target = self.battle_filed.obstacles[click_y][click_x]
                 if spell_target is not None:
+                    print(self.mage1.check_spell(spell, self.battle_filed.obstacles, spell_target))
                     if self.mage1.check_spell(spell, self.battle_filed.obstacles, spell_target):
                         print("@")
                         self.mage1.cast_spell(spell)
