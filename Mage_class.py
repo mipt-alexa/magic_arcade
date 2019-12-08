@@ -85,7 +85,7 @@ class Mage:
                         if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) == Obstacle:
                                 flag = False
                                 break
-                        y += numpy.sign(obj.y - self.y)
+                        y_pr += numpy.sign(obj.y - self.y)
                         displacement += 1 / tg
                         if displacement == 1:
                             if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) == Obstacle:
