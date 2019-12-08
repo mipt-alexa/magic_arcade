@@ -67,31 +67,31 @@ class Mage:
                     Пробегаются все поля (переменные x_pr, y_pr), затрагиваемые линией выстрела и идет проверка на препятствия
                     """
                     if turn == 'x':
-                        if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) is not None:
+                        if type(obstacles[x_pr + sign(obj.x - self.x)][y_pr]) is not None:
                             flag = False
                             break
-                        x_pr += numpy.sign(obj.x - self.x)
+                        x_pr += sign(obj.x - self.x)
                         displacement += tg
                         if displacement == 1:
-                            if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) is not None:
+                            if type(obstacles[x_pr][y_pr + sign(obj.y - self.y)]) is not None:
                                 flag = False
                                 break
-                            y_pr += numpy.sign(obj.y - self.y)
+                            y_pr += sign(obj.y - self.y)
                             displacement = 0
                         elif displacement >= 1:
                             turn = 'y'
                             displacement = (1 - displacement) / tg
                     else:
-                        if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) is not None:
+                        if type(obstacles[x_pr][y_pr + sign(obj.y - self.y)]) is not None:
                                 flag = False
                                 break
-                        y_pr += numpy.sign(obj.y - self.y)
+                        y_pr += sign(obj.y - self.y)
                         displacement += 1 / tg
                         if displacement == 1:
-                            if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) is not None:
+                            if type(obstacles[x_pr + sign(obj.x - self.x)][y_pr]) is not None:
                                 flag = False
                                 break
-                            x_pr += numpy.sign(obj.x - self.x)
+                            x_pr += sign(obj.x - self.x)
                             displacement = 0
                         elif displacement >= 1:
                             turn = 'x'
