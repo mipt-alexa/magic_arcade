@@ -58,7 +58,7 @@ class ClientGameApp:
         self.objects = {}
 
     # def draw_object(self, obj):
-    #     canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=lib.load_image(self, #FIXME здесь
+    #     canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=lib.get_image(#FIXME здесь
     #      должен быть номер картинки))
     #     return canvas_id
 
