@@ -113,7 +113,6 @@ class ClientGameApp:
         self.root.after(DT, self.update)
 
 
-
 app = ClientGameApp()
 app.bind_all()
 app.draw_grid()
