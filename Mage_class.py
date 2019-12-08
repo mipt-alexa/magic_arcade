@@ -1,3 +1,7 @@
+from numpy import sign
+import Spell_classes
+
+
 BASIC_HEALTH = 100
 BASIC_ENERGY = 100
 STEP_ENERGY = 20
@@ -28,13 +32,10 @@ class Mage:
         else:
             return False
 
-    def check_spell(self, spell, battle_field=None, obj=None):
+    def check_spell(self, spell, obstacles=None, obj=None):
         """
         метод проверяет, может ли маг вызвать заклинание.
         возвращает True, если да и False, если нет
-        :param spell:
-        :param battle_field:
-        :param obj:
         """
         if spell.spell_type == 'state':
             if self.energy >= spell.energy:
@@ -43,7 +44,58 @@ class Mage:
                 return False
         elif spell.spell_type == 'directed':
             flag = True
-            # TODO написать проверку того, что между заклинанием и целью нет других обЪектов
+            """
+            Проверка того, есть ли между Mage и obj, на которое применяют магию препятствия
+            """
+            # Необходимо выполнить проверку этой части
+            tg = (obj.y - self.y) / (obj.x - self.x)
+            if tg == 1:
+                for i in range(self.y, obj.y, 1):
+                    if type(obstacles[i][i]) is not None:
+                          flag = False
+            else:
+                if tg * 0.5 > 0.5:
+                    displacement = 0.5 + 0.5 / tg
+                    turn = 'y'
+                else:
+                    displacement = 0.5 + 0.5 * tg
+                    turn = 'x'
+                x_pr = self.x
+                y_pr = self.y
+                while x_pr != obj.x or y_pr != obj.y:
+                    """
+                    Пробегаются все поля (переменные x_pr, y_pr), затрагиваемые линией выстрела и идет проверка на препятствия
+                    """
+                    if turn == 'x':
+                        if type(obstacles[x_pr + sign(obj.x - self.x)][y_pr]) is not None:
+                            flag = False
+                            break
+                        x_pr += sign(obj.x - self.x)
+                        displacement += tg
+                        if displacement == 1:
+                            if type(obstacles[x_pr][y_pr + sign(obj.y - self.y)]) is not None:
+                                flag = False
+                                break
+                            y_pr += sign(obj.y - self.y)
+                            displacement = 0
+                        elif displacement >= 1:
+                            turn = 'y'
+                            displacement = (1 - displacement) / tg
+                    else:
+                        if type(obstacles[x_pr][y_pr + sign(obj.y - self.y)]) is not None:
+                                flag = False
+                                break
+                        y_pr += sign(obj.y - self.y)
+                        displacement += 1 / tg
+                        if displacement == 1:
+                            if type(obstacles[x_pr + sign(obj.x - self.x)][y_pr]) is not None:
+                                flag = False
+                                break
+                            x_pr += sign(obj.x - self.x)
+                            displacement = 0
+                        elif displacement >= 1:
+                            turn = 'x'
+                            displacement = (1 - displacement) * tg
             if flag and self.energy >= spell.energy:
                 return True
             else:
@@ -63,3 +115,4 @@ class Mage:
         """
         self.health -= spell.health_damage
         self.energy -= spell.energy_damage
+

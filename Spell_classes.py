@@ -48,6 +48,3 @@ class StateSpell(Spell):
         super().__init__(name, energy)
         self.spell_type = 'state'
 
-
-
-
