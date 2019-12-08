@@ -45,4 +45,4 @@ class BattleField:
         """
         метод отвечает за создание препятствия
         """
-        obstacles[x][y] = Obstacle(id_giver.new_id())
+        self.obstacles[x][y] = Obstacle(id_giver.new_id())

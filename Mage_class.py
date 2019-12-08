@@ -115,8 +115,3 @@ class Mage:
         """
         self.health -= spell.health_damage
         self.energy -= spell.lenergy_damage
-
-
-mage = Mage(1,1,1)
-s = Spell_classes.spell
-mage.check_spell(s)
