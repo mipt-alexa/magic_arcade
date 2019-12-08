@@ -28,7 +28,7 @@ class GameApp:
         self.id_giver = IdGiver()
         self.field_width = field_width
         self.field_height = field_height
-        self.battle_filed = bf.BattleField(field_width, field_height, self.id_giver)
+        self.battle_field = bf.BattleField(field_width, field_height, self.id_giver)
         self.mage1 = mg.Mage(0, 0, self.id_giver.new_id())
         self.action_state = 'walk'
         self.mage2 = mg.Mage(field_height - 1, field_width - 1, self.id_giver.new_id())
@@ -37,8 +37,8 @@ class GameApp:
     def initialise_game(self):
         for i in range(self.field_height):
             for j in range(self.field_width):
-                if self.battle_filed.field[i][j].type == 'Cell':
-                    message = 'obj ' + str(self.battle_filed.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + 'grey'
+                if self.battle_field.field[i][j].type == 'Cell':
+                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + 'grey'
                     con.write_message("server", message)
         message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
         con.write_message('server', message)
@@ -74,11 +74,11 @@ class GameApp:
                 spell_target = None
                 if click_x == self.mage2.x and click_y == self.mage2.y:
                     spell_target = self.mage2
-                if self.battle_filed.obstacles[click_y][click_x] is not None:
-                    spell_target = self.battle_filed.obstacles[click_y][click_x]
+                if self.battle_field.obstacles[click_y][click_x] is not None:
+                    spell_target = self.battle_field.obstacles[click_y][click_x]
                 if spell_target is not None:
-                    print(self.mage1.check_spell(spell, self.battle_filed.obstacles, spell_target))
-                    if self.mage1.check_spell(spell, self.battle_filed.obstacles, spell_target):
+                    print(self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target))
+                    if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                         print("@")
                         self.mage1.cast_spell(spell)
                         self.mage2.catch_spell(spell)
@@ -92,7 +92,7 @@ class GameApp:
                 else:
                     print("WRONGCELL")
             if turn == 'player2':
-                if True or self.mage2.check_spell(spell, self.battle_filed.obstacles):
+                if True or self.mage2.check_spell(spell, self.battle_field.obstacles):
                     print("@")
                     self.mage2.cast_spell(spell)
                     self.mage1.catch_spell(spell)
