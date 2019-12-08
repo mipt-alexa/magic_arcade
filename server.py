@@ -73,7 +73,7 @@ class GameApp:
             if turn == 'player1':
                 spell_target = None
                 if click_x == self.mage2.x and click_y == self.mage2.y:
-                    spell_target = self.mage1
+                    spell_target = self.mage2
                 if self.battle_filed.obstacles[click_y][click_x] is not None:
                     spell_target = self.battle_filed.obstacles[click_y][click_x]
                 if spell_target is not None:
