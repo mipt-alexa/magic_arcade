@@ -54,10 +54,14 @@ class GameApp:
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
                     message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
                     con.write_message('server', message)
+                    message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
                     message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
+                    con.write_message('server', message)
+                    message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
 
     def update(self):
@@ -65,9 +69,13 @@ class GameApp:
         if self.mage1.energy <= 0:
             self.mage1.energy += 100
             self.game_status = 'player2_turn'
+            message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+            con.write_message('server', message)
         elif self.mage2.energy <= 0:
             self.mage2.energy += 100
             self.game_status = 'player1_turn'
+            message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+            con.write_message('server', message)
         print(self.game_status)
         for message in message_list:
             print(message)

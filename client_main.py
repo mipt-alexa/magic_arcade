@@ -4,6 +4,7 @@ import time
 import random as rnd
 from tkinter.filedialog import *
 import connection as con
+from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 
 DT = 10
 """тик времени"""
@@ -14,6 +15,7 @@ window_width = 500
 window_height = 500
 """Высота окна"""
 interface_height = 100
+
 
 class Object:
     def __init__(self):
@@ -49,10 +51,32 @@ class ClientGameApp:
         self.interface.pack(fill=tkinter.BOTH, expand=1, side=BOTTOM)
         self.field.pack(fill=tkinter.BOTH, expand=1)
         self.objects = {}
+        self.health_bar1_id = None
+        self.health_bar2_id = None
+        self.energy_bar1_id = None
+        self.energy_bar2_id = None
 
     def draw_object(self, obj):
         canvas_id = self.field.create_oval(50 * obj.x, 50 * obj.y, 50 * obj.x + 50, 50 * obj.y + 50, fill=obj.color)
         return canvas_id
+
+    def draw_bars(self):
+        self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
+        self.health_bar2_id = self.interface.create_line(window_width - 200, 15, window_width, 15, width=15, fill='red')
+        self.energy_bar1_id = self.interface.create_line(0, 35, 200, 35, width=15, fill='grey')
+        self.energy_bar2_id = self.interface.create_line(window_width - 200, 35,  window_width, 35, width=15, fill='grey')
+
+    def set_energy(self, player, energy):
+        if player == 'player1':
+            self.interface.coords(self.energy_bar1_id, 0, 35, energy / BASIC_ENERGY * 200, 35)
+        elif player == 'player2':
+            self.interface.coords(self.energy_bar2_id, window_width - energy / BASIC_ENERGY * 200, 35, window_width, 35)
+
+    def set_health(self, player, health):
+        if player == 'player1':
+            self.interface.coords(self.energy_bar1_id, 0, 35, health / BASIC_ENERGY * 200, 35)
+        elif player == 'player2':
+            self.interface.coords(self.energy_bar2_id, window_width - health / BASIC_ENERGY * 200, 35, window_width, 35)
 
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
@@ -67,6 +91,8 @@ class ClientGameApp:
                 self.field.delete(self.objects[a.client_id].canvas_id)
             a.canvas_id = self.draw_object(a)
             self.objects[a.client_id] = a
+        if list_of_words[0] == 'set_energy':
+            self.set_energy(list_of_words[1], int(list_of_words[2]))
 
     def draw_grid(self):
         for i in range(1, 10, 1):
@@ -91,5 +117,6 @@ class ClientGameApp:
 app = ClientGameApp()
 app.bind_all()
 app.draw_grid()
+app.draw_bars()
 app.update()
 app.root.mainloop()
