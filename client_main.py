@@ -13,7 +13,7 @@ window_width = 500
 """Ширина окна"""
 window_height = 500
 """Высота окна"""
-
+interface_height = 100
 
 class Object:
     def __init__(self):
@@ -45,6 +45,8 @@ class ClientGameApp:
     def __init__(self):
         self.root = tkinter.Tk()
         self.field = tkinter.Canvas(self.root, width=window_width, height=window_height, bg="black")
+        self.interface = tkinter.Canvas(self.root, width=window_width, height=interface_height, bg="black")
+        self.interface.pack(fill=tkinter.BOTH, expand=1, side=BOTTOM)
         self.field.pack(fill=tkinter.BOTH, expand=1)
         self.objects = {}
 
