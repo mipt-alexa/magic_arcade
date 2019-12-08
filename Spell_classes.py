@@ -44,10 +44,9 @@ class StateSpell(Spell):
     """
     Заклинание состояния. не имеет направления. Пример заклинани: увеличивает здоровье игрока
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name, energy):
+        super().__init__(name, energy)
         self.spell_type = 'state'
-
 
 
 
