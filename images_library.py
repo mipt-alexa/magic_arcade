@@ -11,6 +11,7 @@ N = 2
 
 
 def load_image(canv):
+    """загружает все изображения, должна быть вызвана в начале 1 раз"""
     global images1
     path = str(1) + ".jpg"
     images1 = ImageTk.PhotoImage(Image.open(path), canv)
@@ -20,6 +21,7 @@ def load_image(canv):
 
 
 def get_image(k):
+    """возвращает объект картинку"""
     global images1
     return images1
 
