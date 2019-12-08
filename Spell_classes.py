@@ -56,7 +56,7 @@ class StateSpell(Spell):
         super().__init__()
         self.spell_type = 'state'
 
-
+spell = StateSpell('a', 20)
 
 
 

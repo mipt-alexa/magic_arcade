@@ -29,7 +29,7 @@ class BattleField:
         метод отвечает за поподание мага по препятствию
         """
         if self.obstacles[x][y].health <= health_damage:
-            delete_obstacles(x, y)
+            self.delete_obstacles(x, y)
         else:
             self.obstacles[x][y].health -= health_damage  # KISS
             
@@ -38,7 +38,7 @@ class BattleField:
         """
         метод отвечает за удаление препятствия
         """
-        obstacles[x][y] = None
+        self.obstacles[x][y] = None
         
      
     def creat_obstacles(x, y):

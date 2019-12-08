@@ -1,4 +1,5 @@
-from math import ceil, sign
+from numpy import sign
+import Spell_classes
 
 
 BASIC_HEALTH = 100
@@ -62,35 +63,38 @@ class Mage:
                 x_pr = self.x
                 y_pr = self.y
                 while x_pr != obj.x or y_pr != obj.y:
+                    """
+                    Пробегаются все поля (переменные x_pr, y_pr), затрагиваемые линией выстрела и идет проверка на препятствия
+                    """
                     if turn == 'x':
-                        if type(obstacles[x_pr +  math.sign(obj.x - self.x)][y_pr]) == Obstacle:
+                        if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) == Obstacle:
                             flag = False
                             break
-                        x += math.sign(obj.x - self.x)
+                        x_pr += numpy.sign(obj.x - self.x)
                         displacement += tg
                         if displacement == 1:
-                            if type(obstacles[x_pr][y_pr + math.sign(obj.y - self.y)]) == Obstacle:
+                            if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) == Obstacle:
                                 flag = False
                                 break
-                            y += math.sign(obj.y - self.y)
+                            y_pr += numpy.sign(obj.y - self.y)
                             displacement = 0
                         elif displacement >= 1:
-                            turn == 'y'
+                            turn = 'y'
                             displacement = (1 - displacement) / tg
                     else:
-                        if type(obstacles[x_pr][y_pr + math.sign(obj.y - self.y)]) == Obstacle:
+                        if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) == Obstacle:
                                 flag = False
                                 break
-                        y += math.sign(obj.y - self.y)
+                        y += numpy.sign(obj.y - self.y)
                         displacement += 1 / tg
                         if displacement == 1:
-                            if type(obstacles[x_pr +  math.sign(obj.x - self.x)][y_pr]) == Obstacle:
+                            if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) == Obstacle:
                                 flag = False
                                 break
-                            x += math.sign(obj.x - self.x)
+                            x_pr += numpy.sign(obj.x - self.x)
                             displacement = 0
                         elif displacement >= 1:
-                            turn == 'x'
+                            turn = 'x'
                             displacement = (1 - displacement) * tg
             if flag and self.energy >= spell.energy:
                 return True
@@ -111,3 +115,8 @@ class Mage:
         """
         self.health -= spell.health_damage
         self.energy -= spell.lenergy_damage
+
+
+mage = Mage(1,1,1)
+s = Spell_classes.spell
+mage.check_spell(s)
