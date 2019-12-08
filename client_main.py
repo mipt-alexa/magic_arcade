@@ -5,7 +5,7 @@ import random as rnd
 from tkinter.filedialog import *
 import connection as con
 from PIL import Image, ImageTk
-import images_library as lib
+import images as img
 
 
 DT = 10
@@ -82,7 +82,7 @@ class ClientGameApp:
         for i in range(0, window_width // cell_size + 1, 1):
             self.field.create_line(0, cell_size * i, window_height, cell_size * i, fill='grey')
             for j in range(0, window_height // cell_size + 1, 1):
-                self.field.create_image(i*cell_size + 1, j*cell_size + 1, anchor=NW, image=lib.get_image(1))
+                self.field.create_image(i * cell_size + 1, j * cell_size + 1, anchor=NW, image=img.get_image(1))
                 self.field.create_line(cell_size * j, 0, cell_size * j, window_width, fill='grey')
 
     def bind_all(self):
@@ -100,12 +100,12 @@ class ClientGameApp:
 
 
 app = ClientGameApp()
-lib.load_image(app)
+img.load_all_images(app)
 
 app.bind_all()
-
 app.draw_grid()
-img2 = lib.get_image(2) #test
+
+img2 = img.get_image(2) #test
 app.field.create_image(15, 15, anchor=NW, image=img2) #test
 
 app.update()
