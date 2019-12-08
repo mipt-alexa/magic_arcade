@@ -4,14 +4,22 @@ import time
 import random as rnd
 from tkinter.filedialog import *
 import connection as con
+from PIL import Image, ImageTk
+import images_library as lib
+
 
 DT = 10
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
-window_width = 500
+cell_size = 34
+"""Размер клетки"""
+width = 15
+"""ширина в клетках"""
+window_width = width*cell_size
 """Ширина окна"""
-window_height = 500
+height = 15
+window_height = height*cell_size
 """Высота окна"""
 
 
@@ -44,13 +52,16 @@ def click_processing(event):
 class ClientGameApp:
     def __init__(self):
         self.root = tkinter.Tk()
+        self.root.wm_title("Magic!")
         self.field = tkinter.Canvas(self.root, width=window_width, height=window_height, bg="black")
         self.field.pack(fill=tkinter.BOTH, expand=1)
         self.objects = {}
 
-    def draw_object(self, obj):
-        canvas_id = self.field.create_oval(50 * obj.x, 50 * obj.y, 50 * obj.x + 50, 50 * obj.y + 50, fill=obj.color)
-        return canvas_id
+    # def draw_object(self, obj):
+    #     canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=lib.load_image(self, #FIXME здесь
+    #      должен быть номер картинки))
+    #     return canvas_id
+
 
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
@@ -58,8 +69,8 @@ class ClientGameApp:
         if list_of_words[0] == 'obj':
             a = Object()
             a.client_id = int(list_of_words[1])
-            a.x = int(list_of_words[2])
-            a.y = int(list_of_words[3])
+            a.x = int(list_of_words[2])*cell_size - 1
+            a.y = int(list_of_words[3])*cell_size - 1
             a.color = list_of_words[4]
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
@@ -67,10 +78,12 @@ class ClientGameApp:
             self.objects[a.client_id] = a
 
     def draw_grid(self):
-        for i in range(1, 10, 1):
-            self.field.create_line(0, 50 * i, 500, 50 * i, fill='grey')
-        for i in range(1, 10, 1):
-            self.field.create_line(50 * i, 0, 50 * i, 500, fill='grey')
+        """Рисует сетку и камушки"""
+        for i in range(0, window_width // cell_size + 1, 1):
+            self.field.create_line(0, cell_size * i, window_height, cell_size * i, fill='grey')
+            for j in range(0, window_height // cell_size + 1, 1):
+                self.field.create_image(i*cell_size + 1, j*cell_size + 1, anchor=NW, image=lib.get_image(1))
+                self.field.create_line(cell_size * j, 0, cell_size * j, window_width, fill='grey')
 
     def bind_all(self):
         self.field.bind('<Button-1>', click_processing)
@@ -87,7 +100,13 @@ class ClientGameApp:
 
 
 app = ClientGameApp()
+lib.load_image(app)
+
 app.bind_all()
+
 app.draw_grid()
+img2 = lib.get_image(2) #test
+app.field.create_image(15, 15, anchor=NW, image=img2) #test
+
 app.update()
 app.root.mainloop()
