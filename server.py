@@ -48,6 +48,45 @@ class GameApp:
         message = 'set_turn ' + 'player1'
         con.write_message('server', message)
 
+    def attack(self, turn, spell, click_x, click_y):
+        if turn == 'player1':
+            spell_target = None
+            if click_x == self.mage2.x and click_y == self.mage2.y:
+                spell_target = self.mage2
+            if self.battle_field.obstacles[click_y][click_x] is not None:
+                spell_target = self.battle_field.obstacles[click_y][click_x]
+            if self.battle_field.obstacles[click_y][click_x] is not None:
+                spell_target = self.battle_field.obstacles[click_y][click_x]
+            if spell_target is not None:
+                if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
+                    print("@")
+                    self.mage1.cast_spell(spell)
+                    self.mage2.catch_spell(spell)
+                    print(self.mage2.health)
+                    message = 'set_health ' + 'player2 ' + str(self.mage2.health)
+                    con.write_message('server', message)
+                    message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                    con.write_message('server', message)
+                    message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
+        if turn == 'player2':
+            spell_target = None
+            if click_x == self.mage1.x and click_y == self.mage1.y:
+                spell_target = self.mage1
+            if self.battle_field.obstacles[click_y][click_x] is not None:
+                spell_target = self.battle_field.obstacles[click_y][click_x]
+            if spell_target is not None:
+                if True or self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
+                    print("@")
+                    self.mage2.cast_spell(spell)
+                    self.mage1.catch_spell(spell)
+                    print(self.mage1.health)
+                    message = 'set_health ' + 'player1 ' + str(self.mage1.health)
+                    con.write_message('server', message)
+                    message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
+                    message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                    con.write_message('server', message)
 
     def process_click_message(self, turn, splitted_message):
         click_x = int(splitted_message[1])
@@ -70,44 +109,8 @@ class GameApp:
         if self.action_state[:2] == 'sp':
             spell_number = int((self.action_state.split())[1])
             spell = spell_book[spell_number]
-            if turn == 'player1':
-                spell_target = None
-                if click_x == self.mage2.x and click_y == self.mage2.y:
-                    spell_target = self.mage2
-                if self.battle_field.obstacles[click_y][click_x] is not None:
-                    spell_target = self.battle_field.obstacles[click_y][click_x]
-                if self.battle_field.obstacles[click_y][click_x] is not None:
-                    spell_target = self.battle_field.obstacles[click_y][click_x]
-                if spell_target is not None:
-                    if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
-                        print("@")
-                        self.mage1.cast_spell(spell)
-                        self.mage2.catch_spell(spell)
-                        print(self.mage2.health)
-                        message = 'set_health ' + 'player2 ' + str(self.mage2.health)
-                        con.write_message('server', message)
-                        message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
-                        con.write_message('server', message)
-                        message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
-                        con.write_message('server', message)
-            if turn == 'player2':
-                spell_target = None
-                if click_x == self.mage1.x and click_y == self.mage1.y:
-                    spell_target = self.mage1
-                if self.battle_field.obstacles[click_y][click_x] is not None:
-                    spell_target = self.battle_field.obstacles[click_y][click_x]
-                if spell_target is not None:
-                    if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
-                        print("@")
-                        self.mage2.cast_spell(spell)
-                        self.mage1.catch_spell(spell)
-                        print(self.mage1.health)
-                        message = 'set_health ' + 'player1 ' + str(self.mage1.health)
-                        con.write_message('server', message)
-                        message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
-                        con.write_message('server', message)
-                        message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
-                        con.write_message('server', message)
+            self.attack(turn, spell, click_x, click_y)
+
 
     def process_key_message(self, splitted_message):
         if splitted_message[1] == '0':

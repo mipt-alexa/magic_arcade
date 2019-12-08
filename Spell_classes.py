@@ -19,7 +19,6 @@ class DirectSpell(Spell):
     def __init__(self, name, energy, range):
         super().__init__(name, energy)
         self.range = range
-        self.spell_type = 'directed'
 
 
 class AttackDirectSpell(DirectSpell):
@@ -28,6 +27,7 @@ class AttackDirectSpell(DirectSpell):
     """
     def __init__(self, name, energy, range, health_damage, energy_damage, destination):
         super().__init__(name, energy, range)
+        self.spell_type = 'attack_directed'
         self.destination = destination # тип объекта на который может быть направленно заклинание(Mage, Obstacle, Both)
         self.health_damage = health_damage
         self.energy_damage = energy_damage
@@ -37,7 +37,10 @@ class DefendDirectSpell(DirectSpell):
     """
     Защищающее направленное заклинание, например создает препятствие в выбранной клетке
     """
-    pass
+    def __init__(self, name, energy, range):
+        super().__init__(name, energy, range)
+        self.spell_type = 'defend_directed'
+
 
 
 class StateSpell(Spell):
