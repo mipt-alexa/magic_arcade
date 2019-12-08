@@ -62,4 +62,4 @@ class Mage:
         :param spell:
         """
         self.health -= spell.health_damage
-        self.energy -= spell.lenergy_damage
+        self.energy -= spell.energy_damage

@@ -16,8 +16,8 @@ class DirectSpell(Spell):
     """
     Класс направленного заклинания, которое применяется на некоторый объект (маг ил препятствие) или клетку
     """
-    def __init__(self, range):
-        super().__init__()
+    def __init__(self, name, energy, range):
+        super().__init__(name, energy)
         self.range = range
         self.spell_type = 'directed'
 
@@ -26,8 +26,8 @@ class AttackDirectSpell(DirectSpell):
     """
     Направленное заклинание, наносящее урон
     """
-    def __init__(self, health_damage, energy_damage, destination):
-        super().__init__()
+    def __init__(self, name, energy, range, health_damage, energy_damage, destination):
+        super().__init__(name, energy, range)
         self.destination = destination # тип объекта на который может быть направленно заклинание(Mage, Obstacle, Both)
         self.health_damage = health_damage
         self.energy_damage = energy_damage

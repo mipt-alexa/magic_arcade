@@ -43,6 +43,12 @@ def click_processing(event):
     send_message(message_to_server)
 
 
+def key_processing(event):
+    key = event.char
+    message_to_server = 'key ' + key
+    send_message(message_to_server)
+
+
 class ClientGameApp:
     def __init__(self):
         self.root = tkinter.Tk()
@@ -74,9 +80,9 @@ class ClientGameApp:
 
     def set_health(self, player, health):
         if player == 'player1':
-            self.interface.coords(self.energy_bar1_id, 0, 35, health / BASIC_ENERGY * 200, 35)
+            self.interface.coords(self.health_bar1_id, 0, 15, health / BASIC_HEALTH * 200, 15)
         elif player == 'player2':
-            self.interface.coords(self.energy_bar2_id, window_width - health / BASIC_ENERGY * 200, 35, window_width, 35)
+            self.interface.coords(self.health_bar2_id, window_width - health / BASIC_HEALTH * 200, 15, window_width, 15)
 
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
@@ -93,6 +99,9 @@ class ClientGameApp:
             self.objects[a.client_id] = a
         if list_of_words[0] == 'set_energy':
             self.set_energy(list_of_words[1], int(list_of_words[2]))
+        if list_of_words[0] == 'set_health':
+            self.set_health(list_of_words[1], int(list_of_words[2]))
+
 
     def draw_grid(self):
         for i in range(1, 10, 1):
@@ -102,6 +111,7 @@ class ClientGameApp:
 
     def bind_all(self):
         self.field.bind('<Button-1>', click_processing)
+        self.root.bind('<Key>', key_processing)
 
     def update(self):
         list_of_messages = read_message()

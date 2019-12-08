@@ -3,9 +3,11 @@ import Mage_class as mg
 import connection as con
 import tkinter as tk
 import time
+from Spell_book import spell_book
 
 root = tk.Tk()
 DT = 10
+
 
 def read_message():
     list_of_messages = con.read_message('server')
@@ -38,7 +40,6 @@ class GameApp:
                 if self.battle_filed.field[i][j].type == 'Cell':
                     message = 'obj ' + str(self.battle_filed.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + 'grey'
                     con.write_message("server", message)
-                    #time.sleep(0.05)
         message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
         con.write_message('server', message)
         message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
@@ -63,6 +64,26 @@ class GameApp:
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
+        if self.action_state[:2] == 'sp':
+            print("!")
+            spell_number = int((self.action_state.split())[1])
+            spell = spell_book[spell_number]
+            if turn == 'player1':
+                if self.mage1.check_spell(spell, self.battle_filed) or True:
+                    print("@")
+                    self.mage1.cast_spell(spell)
+                    self.mage2.catch_spell(spell)
+                    print(self.mage2.health)
+                    message = 'set_health ' + 'player2 ' + str(self.mage2.health)
+                    con.write_message('server', message)
+                    message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
+
+    def process_key_message(self, splitted_message):
+        if splitted_message[1] == '0':
+            self.action_state = 'walk'
+        else:
+            self.action_state = 'spell ' + str(splitted_message[1])
 
     def update(self):
         message_list = read_message()
@@ -76,7 +97,7 @@ class GameApp:
             self.game_status = 'player1_turn'
             message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
             con.write_message('server', message)
-        print(self.game_status)
+
         for message in message_list:
             print(message)
             if message == '':
@@ -86,16 +107,14 @@ class GameApp:
                 if splitted_message[0] == 'click':
                     self.process_click_message('player1', splitted_message)
                 if splitted_message[0] == 'key':
-                    key_number = int(splitted_message[1])
-                    self.action_state = 'spell' + str(key_number)
+                    self.process_key_message(splitted_message)
 
             elif self.game_status == 'player2_turn':
                 splitted_message = message.split()
                 if splitted_message[0] == 'click':
                     self.process_click_message('player2', splitted_message)
                 if splitted_message[0] == 'key':
-                    key_number = int(splitted_message[1])
-                    self.action_state = 'spell' + str(key_number)
+                    self.process_key_message(splitted_message)
         root.after(DT, self.update)
 
 
