@@ -5,14 +5,22 @@ import random as rnd
 from tkinter.filedialog import *
 import connection as con
 from Mage_class import BASIC_ENERGY, BASIC_HEALTH
+from PIL import Image, ImageTk
+import images as img
+
 
 DT = 10
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
-window_width = 500
+cell_size = 34
+"""Размер клетки"""
+width = 15
+"""ширина в клетках"""
+window_width = width*cell_size
 """Ширина окна"""
-window_height = 500
+height = 15
+window_height = height*cell_size
 """Высота окна"""
 interface_height = 100
 
@@ -23,6 +31,7 @@ class Object:
         self.y = 0
         self.client_id = None
         self.color = ''
+        self.img_id = None
         self.canvas_id = None
 
 
@@ -37,8 +46,8 @@ def send_message(message):
 
 def click_processing(event):
     """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
-    event_x = event.x // 50
-    event_y = event.y // 50
+    event_x = event.x // 34
+    event_y = event.y // 34
     message_to_server = 'click ' + str(event_x) + ' ' + str(event_y) + ' '
     send_message(message_to_server)
 
@@ -52,6 +61,7 @@ def key_processing(event):
 class ClientGameApp:
     def __init__(self):
         self.root = tkinter.Tk()
+        self.root.wm_title("Magic!")
         self.field = tkinter.Canvas(self.root, width=window_width, height=window_height, bg="black")
         self.interface = tkinter.Canvas(self.root, width=window_width, height=interface_height, bg="black")
         self.interface.pack(fill=tkinter.BOTH, expand=1, side=BOTTOM)
@@ -65,8 +75,9 @@ class ClientGameApp:
         self.player2_turn_id = None
 
     def draw_object(self, obj):
-        canvas_id = self.field.create_oval(50 * obj.x, 50 * obj.y, 50 * obj.x + 50, 50 * obj.y + 50, fill=obj.color)
+        canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
+
 
     def draw_bars(self):
         self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
@@ -104,11 +115,12 @@ class ClientGameApp:
         if list_of_words[0] == 'obj':
             a = Object()
             a.client_id = int(list_of_words[1])
-            a.x = int(list_of_words[2])
-            a.y = int(list_of_words[3])
-            a.color = list_of_words[4]
+            a.x = int(list_of_words[2])*cell_size - 1
+            a.y = int(list_of_words[3])*cell_size - 1
+            a.img_id = int(list_of_words[4])
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
+            print(a.x, a.y, a.img_id)
             a.canvas_id = self.draw_object(a)
             self.objects[a.client_id] = a
         if list_of_words[0] == 'set_energy':
@@ -119,10 +131,11 @@ class ClientGameApp:
             self.set_turn(list_of_words[1])
 
     def draw_grid(self):
-        for i in range(1, 10, 1):
-            self.field.create_line(0, 50 * i, 500, 50 * i, fill='grey')
-        for i in range(1, 10, 1):
-            self.field.create_line(50 * i, 0, 50 * i, 500, fill='grey')
+        """Рисует сетку и камушки"""
+        for i in range(0, window_width // cell_size + 1, 1):
+            self.field.create_line(0, cell_size * i, window_height, cell_size * i, fill='grey')
+            for j in range(0, window_height // cell_size + 1, 1):
+                self.field.create_line(cell_size * j, 0, cell_size * j, window_width, fill='grey')
 
     def bind_all(self):
         self.field.bind('<Button-1>', click_processing)
@@ -139,9 +152,19 @@ class ClientGameApp:
 
 
 app = ClientGameApp()
+img.load_all_images(app)
+
 app.bind_all()
 app.draw_grid()
 app.draw_bars()
 app.draw_turn()
+# a = Object()
+# a.img_id = 1
+# a.x = 1
+# a.y = 1
+# a.canvas_id = app.draw_object(a)
+#img2 = img.get_image(4) #test
+#pp.field.create_image(34, 34, anchor=NW, image=img2) #test
+
 app.update()
 app.root.mainloop()

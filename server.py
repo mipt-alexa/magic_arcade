@@ -38,11 +38,11 @@ class GameApp:
         for i in range(self.field_height):
             for j in range(self.field_width):
                 if self.battle_field.field[i][j].type == 'Cell':
-                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + 'grey'
+                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + '1'
                     con.write_message("server", message)
-        message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
+        message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + '3'
         con.write_message('server', message)
-        message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
+        message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + '4'
         con.write_message('server', message)
         self.game_status = 'player1_turn'
         message = 'set_turn ' + 'player1'
@@ -95,14 +95,14 @@ class GameApp:
             if turn == 'player1':
                 if self.mage1.check_move(click_x, click_y):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
-                    message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + 'red'
+                    message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + '3'
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
-                    message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + 'red'
+                    message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + '4'
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
@@ -113,25 +113,26 @@ class GameApp:
 
 
     def process_key_message(self, splitted_message):
-        if splitted_message[1] == '0':
-            self.action_state = 'walk'
-        elif splitted_message[1] == 't':
-            if self.game_status == 'player1_turn':
-                self.game_status = 'player2_turn'
-                message = 'set_turn ' + 'player2'
-                con.write_message('server', message)
-                self.mage1.energy = min(self.mage1.energy + 80, mg.BASIC_ENERGY)
-                message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
-                con.write_message('server', message)
-            elif self.game_status == 'player2_turn':
-                self.game_status = 'player1_turn'
-                message = 'set_turn ' + 'player1'
-                con.write_message('server', message)
-                self.mage2.energy = min(self.mage2.energy + 80, mg.BASIC_ENERGY)
-                message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
-                con.write_message('server', message)
-        else:
-            self.action_state = 'spell ' + str(splitted_message[1])
+        if len(splitted_message)>1:
+            if splitted_message[1] == '0':
+                self.action_state = 'walk'
+            elif splitted_message[1] == 't':
+                if self.game_status == 'player1_turn':
+                    self.game_status = 'player2_turn'
+                    message = 'set_turn ' + 'player2'
+                    con.write_message('server', message)
+                    self.mage1.energy = min(self.mage1.energy + 80, mg.BASIC_ENERGY)
+                    message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
+                elif self.game_status == 'player2_turn':
+                    self.game_status = 'player1_turn'
+                    message = 'set_turn ' + 'player1'
+                    con.write_message('server', message)
+                    self.mage2.energy = min(self.mage2.energy + 80, mg.BASIC_ENERGY)
+                    message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                    con.write_message('server', message)
+            else:
+                self.action_state = 'spell ' + str(splitted_message[1])
 
     def update(self):
         message_list = read_message()
@@ -155,7 +156,7 @@ class GameApp:
         root.after(DT, self.update)
 
 
-game = GameApp(10, 10)
+game = GameApp(15, 15)
 game.initialise_game()
 game.update()
 root.mainloop()
