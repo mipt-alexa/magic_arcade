@@ -51,7 +51,7 @@ class Mage:
             tg = (obj.y - self.y) / (obj.x - self.x)
             if tg == 1:
                 for i in range(self.y, obj.y, 1):
-                    if type(obstacles[i][i]) == Obstacle:
+                    if type(obstacles[i][i]) is not None:
                           flag = False
             else:
                 if tg * 0.5 > 0.5:
@@ -67,13 +67,13 @@ class Mage:
                     Пробегаются все поля (переменные x_pr, y_pr), затрагиваемые линией выстрела и идет проверка на препятствия
                     """
                     if turn == 'x':
-                        if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) == Obstacle:
+                        if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) is not None:
                             flag = False
                             break
                         x_pr += numpy.sign(obj.x - self.x)
                         displacement += tg
                         if displacement == 1:
-                            if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) == Obstacle:
+                            if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) is not None:
                                 flag = False
                                 break
                             y_pr += numpy.sign(obj.y - self.y)
@@ -82,13 +82,13 @@ class Mage:
                             turn = 'y'
                             displacement = (1 - displacement) / tg
                     else:
-                        if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) == Obstacle:
+                        if type(obstacles[x_pr][y_pr + numpy.sign(obj.y - self.y)]) is not None:
                                 flag = False
                                 break
                         y_pr += numpy.sign(obj.y - self.y)
                         displacement += 1 / tg
                         if displacement == 1:
-                            if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) == Obstacle:
+                            if type(obstacles[x_pr +  numpy.sign(obj.x - self.x)][y_pr]) is not None:
                                 flag = False
                                 break
                             x_pr += numpy.sign(obj.x - self.x)
