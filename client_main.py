@@ -74,8 +74,11 @@ class ClientGameApp:
         self.player1_turn_id = None
         self.player2_turn_id = None
 
-    def draw_object(self, obj):
-        canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
+    def draw_object(self, obj, canv):
+        if canv == 'field':
+            canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
+        elif canv == 'interface':
+            canvas_id = self.interface.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
 
 
@@ -88,6 +91,16 @@ class ClientGameApp:
     def draw_turn(self):
         self.player1_turn_id = self.interface.create_rectangle(5, 55, 45, 95, fill='red')
         self.player2_turn_id = self.interface.create_rectangle(window_width - 5, 55, window_width - 45, 95, fill='red')
+        mage1 = Object()
+        mage1.img_id = 3
+        mage1.x = 55
+        mage1.y = 55
+        self.draw_object(mage1, 'interface')
+        mage2 = Object()
+        mage2.img_id = 4
+        mage2.x = window_width - 55 - 32
+        mage2.y = 55
+        self.draw_object(mage2, 'interface')
 
     def set_turn(self, player):
         if player == 'player1':
@@ -121,7 +134,7 @@ class ClientGameApp:
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
             print(a.x, a.y, a.img_id)
-            a.canvas_id = self.draw_object(a)
+            a.canvas_id = self.draw_object(a, 'field')
             self.objects[a.client_id] = a
         if list_of_words[0] == 'set_energy':
             self.set_energy(list_of_words[1], int(list_of_words[2]))
