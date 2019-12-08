@@ -105,8 +105,8 @@ img.load_all_images(app)
 app.bind_all()
 app.draw_grid()
 
-img2 = img.get_image(2) #test
-app.field.create_image(15, 15, anchor=NW, image=img2) #test
+img2 = img.get_image(4) #test
+app.field.create_image(34, 34, anchor=NW, image=img2) #test
 
 app.update()
 app.root.mainloop()
