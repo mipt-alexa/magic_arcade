@@ -18,7 +18,7 @@ class DirectSpell(Spell):
     """
     def __init__(self, name, energy, spell_range):
         super().__init__(name, energy)
-        self.range = spell_range
+        self.spell_range = spell_range
 
 
 class AttackDirectSpell(DirectSpell):

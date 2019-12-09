@@ -43,6 +43,8 @@ class GameApp:
                     message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(j) + ' ' + str(i) + ' ' \
                               + self.battle_field.field[i][j].image_id
                     con.write_message("server", message)
+                    time.sleep(0.005)
+                    con.write_message("server", message)
         message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + \
                   self.mage1.image_id
         con.write_message('server', message)
@@ -116,7 +118,6 @@ class GameApp:
                         con.write_message('server', message)
                         self.battle_field.delete_obstacle(click_x, click_y)
 
-
     def defend(self, turn, spell, click_x, click_y):
         print("defend")
         if turn == 'player1':
@@ -170,10 +171,12 @@ class GameApp:
             elif spell.spell_type == 'defend_directed':
                 self.defend(turn, spell, click_x, click_y)
 
-    def process_key_message(self, splitted_message):
+    def process_key_message(self, turn, splitted_message):
         if len(splitted_message) > 1:
             if splitted_message[1] == '0':
                 self.action_state = 'walk'
+                message = 'del_range_circle'
+                con.write_message('server', message)
             elif splitted_message[1] == 't':
                 if self.game_status == 'player1_turn':
                     self.game_status = 'player2_turn'
@@ -190,7 +193,20 @@ class GameApp:
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
             else:
+                message = 'del_range_circle'
+                con.write_message('server', message)
                 self.action_state = 'spell ' + str(splitted_message[1])
+                spell_number = int((self.action_state.split())[1])
+                spell = spell_book[spell_number]
+                if spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
+                    if turn == 'player1':
+                        message = 'draw_range_circle ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + str(
+                            spell.spell_range)
+                        con.write_message('server', message)
+                    elif turn == 'player2':
+                        message = 'draw_range_circle ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + str(
+                            spell.spell_range)
+                        con.write_message('server', message)
 
     def update(self):
         message_list = read_message()
@@ -203,14 +219,14 @@ class GameApp:
                 if splitted_message[0] == 'click':
                     self.process_click_message('player1', splitted_message)
                 if splitted_message[0] == 'key':
-                    self.process_key_message(splitted_message)
+                    self.process_key_message('player1', splitted_message)
 
             elif self.game_status == 'player2_turn':
                 splitted_message = message.split()
                 if splitted_message[0] == 'click':
                     self.process_click_message('player2', splitted_message)
                 if splitted_message[0] == 'key':
-                    self.process_key_message(splitted_message)
+                    self.process_key_message('player2', splitted_message)
         root.after(DT, self.update)
 
 

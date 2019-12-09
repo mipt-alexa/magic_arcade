@@ -7,8 +7,8 @@ import connection as con
 from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
-
-DT = 10
+ANIM_DT = 10
+DT = 30
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -22,7 +22,7 @@ height = 15
 window_height = height * cell_size
 """Высота окна"""
 interface_height = 100
-
+import time
 
 class Object:
     def __init__(self):
@@ -32,6 +32,10 @@ class Object:
         self.color = ''
         self.img_id = None
         self.canvas_id = None
+
+    def set_coords(self, x, y):
+        self.x = x
+        self.y = y
 
 
 def read_message():
@@ -81,14 +85,42 @@ class ClientGameApp:
             canvas_id = self.interface.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
 
+    # def animate_object(self, obj, x2, y2, animation_time):
+    #     """
+    #     Передвигает уже нарисованные объект
+    #     :param obj: объект
+    #     :param x2: x клетки назначения
+    #     :param y2: y клетки назначения
+    #     :param animation_time: время анимации в ms
+    #     :return:
+    #     """
+    #     screen_x1 = obj.x
+    #     screen_y1 = obj.y
+    #     screen_x2 = x2 * cell_size
+    #     screen_y2 = y2 * cell_size
+    #     self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
+
+    # def move(self, obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
+    #     cr_time += ANIM_DT
+    #     x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
+    #     y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
+    #     obj.set_coords(x, y)
+    #     self.field.delete(obj.canvas_id)
+    #     obj.canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
+    #     if cr_time <= animation_time:
+    #         self.root.after(ANIM_DT, lambda: self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
+    #     else:
+    #         self.field.delete(obj.canvas_id)
+    #         obj.set_coords(screen_x2, screen_y2)
+    #         self.draw_object(obj, 'field')
+
     def draw_range_circle(self, x, y, spell_range):
-        screen_x = x * cell_size - 1 - 17
-        screen_y = y * cell_size - 1 - 17
+        screen_x = x * cell_size - 17
+        screen_y = y * cell_size - 17
         screen_r = spell_range * cell_size
         print(screen_x, screen_y, screen_r)
         self.range_circle_id = self.field.create_oval(screen_x - screen_r, screen_y - screen_r, screen_x + screen_r,
                                                       screen_y + screen_r, outline='red', width=4)
-        # self.range_circle_id = self.field.create_oval(0, 0, 34, 34, outline='red', width=4)
 
     def del_range_circle(self):
         self.field.delete(self.range_circle_id)
@@ -140,23 +172,28 @@ class ClientGameApp:
         if list_of_words[0] == 'obj':
             a = Object()
             a.client_id = int(list_of_words[1])
-            a.x = int(list_of_words[2]) * cell_size - 1
-            a.y = int(list_of_words[3]) * cell_size - 1
+            a.x = int(list_of_words[2]) * cell_size
+            a.y = int(list_of_words[3]) * cell_size
             a.img_id = int(list_of_words[4])
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
-            print(a.x, a.y, a.img_id)
             a.canvas_id = self.draw_object(a, 'field')
             self.objects[a.client_id] = a
         if list_of_words[0] == 'del':
             self.field.delete(self.objects[int(list_of_words[1])].canvas_id)
             del self.objects[int(list_of_words[1])]
+        if list_of_words[0] == 'animate':
+            self.animate_object(self.objects[int(list_of_words[1])], int(list_of_words[2]), int(list_of_words[3]), int(list_of_words[4]))
         if list_of_words[0] == 'set_energy':
             self.set_energy(list_of_words[1], int(list_of_words[2]))
         if list_of_words[0] == 'set_health':
             self.set_health(list_of_words[1], int(list_of_words[2]))
         if list_of_words[0] == 'set_turn':
             self.set_turn(list_of_words[1])
+        if list_of_words[0] == 'draw_range_circle':
+            self.draw_range_circle(int(list_of_words[1]), int(list_of_words[2]), int(list_of_words[3]))
+        if list_of_words[0] == 'del_range_circle':
+            self.del_range_circle()
 
     def draw_grid(self):
         """Рисует сетку и камушки"""
@@ -189,9 +226,13 @@ app.draw_turn()
 #app.draw_range_circle(5, 5, 1)
 # a = Object()
 # a.img_id = 1
-# a.x = 1
-# a.y = 1
-# a.canvas_id = app.draw_object(a)
+# a.x = 4 * cell_size
+# a.y = 5 * cell_size
+# a.canvas_id = app.draw_object(a, 'field')
+# app.animate_object(a, 2, 1, 1000)
+# time.sleep(1)
+# app.animate_object(a, 3, 10, 1000)
+#app.field.delete(a.canvas_id)
 # img2 = img.get_image(4) #test
 # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
 
