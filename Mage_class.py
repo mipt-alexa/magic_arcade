@@ -2,7 +2,6 @@ from numpy import sign
 import Spell_classes
 from BattleField_class import Obstacle
 
-
 BASIC_HEALTH = 100
 BASIC_ENERGY = 100
 STEP_ENERGY = 20
@@ -10,6 +9,20 @@ STEP_ENERGY = 20
 """
 Класс маг, класс персонажа, которым управляет игрок
 """
+
+
+def vm(x1, y1, x2, y2):
+    """
+    Вектороное произведение vector_multiplication
+    """
+    return x1 * y2 - x2 * y1
+
+
+def ca(x1, y1, x2, y2):
+    """
+    Косинус угла между векторами cos_angle
+    """
+    return (x1 * y1 + x2 * y2) / ((x1 ** 2 + y1 ** 2) * (x2 ** 2 + y2 ** 2)) ** 2
 
 
 class Mage:
@@ -29,7 +42,8 @@ class Mage:
             self.energy -= STEP_ENERGY
 
     def check_move(self, click_x, click_y, obstacles, another_mage):
-        if (abs(click_x - self.x) == 1 and abs(click_y - self.y) == 0) or (abs(click_x - self.x) == 0 and abs(click_y - self.y) == 1):
+        if (abs(click_x - self.x) == 1 and abs(click_y - self.y) == 0) or (
+                abs(click_x - self.x) == 0 and abs(click_y - self.y) == 1):
             if obstacles[click_y][click_x] is None and not (click_x == another_mage.x and click_y == another_mage.y):
                 return True
             else:
@@ -37,7 +51,7 @@ class Mage:
         else:
             return False
 
-    def check_spell(self, spell, obstacles=None, obj=None):
+    def check_spell(self, spell, obstacles=None, obj=None, mage_2=None):
         """
         метод проверяет, может ли маг вызвать заклинание.
         возвращает True, если да и False, если нет
@@ -47,67 +61,45 @@ class Mage:
                 return True
             else:
                 return False
-        elif spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
+
+        elif spell.spell_type == 'defend_directed':
+            if (obj.x == mage_2.x and obj.y == mage_2.y) or (type(obstacles[obj.x][obj.y]) == Obstacle):
+                return False
+            else:
+                return True
+        elif spell.spell_type == 'attack_directed':
             flag = True
             """
-            Проверка того, есть ли между Mage и obj, на которое применяют магию препятствия
+            Проверка на наличие препятствия между целью и стреляющим
             """
-            # Необходимо выполнить проверку этой части
-            if obj.x - self.x == 0:
-                for i in range(self.y, obj.y, 1):
-                    if type(obstacles[self.x][i]) == Obstacle:
-                        flag = False
-                        break
-            else:
-                tg = (obj.y - self.y) / (obj.x - self.x)
-                if tg == 1:
-                    for i in range(self.y, obj.y, 1):
-                        if type(obstacles[i][i]) == Obstacle:
+            dx = obj.x - self.x
+            dy = obj.y - self.y
+            k = 0
+            for x in range(10):
+                if k == 1:
+                    break
+                for y in range(10):
+                    if (x == obj.x and y == obj.y) or (x == self.x and y == self.y):
+                        continue
+                    if ca(x - 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y + 0.5,
+                                                                                                      dx,
+                                                                                                      dy) <= 0 and ca(
+                            x - 0.5, y + 0.5, dx, dy) <= 0:
+                        continue
+                    condition_1 = vm(x - 0.5, y - 0.5, dx, dy) * vm(x - 0.5, y + 0.5, dx, dy) * vm(x + 0.5, y + 0.5, dx,
+                                                                                                   dy) * vm(x + 0.5,
+                                                                                                            y - 0.5, dx,
+                                                                                                            dy) == 0
+                    condition_2 = abs(
+                        vm(x - 0.5, y - 0.5, dx, dy) + vm(x - 0.5, y + 0.5, dx, dy) + vm(x + 0.5, y + 0.5, dx, dy) + vm(
+                            x + 0.5, y - 0.5, dx, dy)) == abs(vm(x - 0.5, y - 0.5, dx, dy)) + abs(
+                        vm(x - 0.5, y + 0.5, dx, dy)) + abs(vm(x + 0.5, y + 0.5, dx, dy)) + abs(
+                        vm(x + 0.5, y - 0.5, dx, dy))
+                    if condition_1 or condition_2:
+                        if type(obstacles[x][y]) == Obstacle:
                             flag = False
+                            k = 1
                             break
-                else:
-                    if tg * 0.5 > 0.5:
-                        displacement = 0.5 + 0.5 / tg
-                        turn = 'y'
-                    else:
-                        displacement = 0.5 + 0.5 * tg
-                        turn = 'x'
-                    x_pr = self.x
-                    y_pr = self.y
-                    while x_pr != obj.x or y_pr != obj.y:
-                        """
-                        Пробегаются все поля (переменные x_pr, y_pr), затрагиваемые линией выстрела и идет проверка на препятствия
-                        """
-                        if turn == 'x':
-                            if type(obstacles[x_pr + sign(obj.x - self.x)][y_pr]) == Obstacle:
-                                flag = False
-                                break
-                            x_pr += sign(obj.x - self.x)
-                            displacement += tg
-                            if displacement == 1:
-                                if type(obstacles[x_pr][y_pr + sign(obj.y - self.y)]) == Obstacle:
-                                    flag = False
-                                    break
-                                y_pr += sign(obj.y - self.y)
-                                displacement = 0
-                            elif displacement >= 1:
-                                turn = 'y'
-                                displacement = (1 - displacement) / tg
-                        else:
-                            if type(obstacles[x_pr][y_pr + sign(obj.y - self.y)]) == Obstacle:
-                                flag = False
-                                break
-                            y_pr += sign(obj.y - self.y)
-                            displacement += 1 / tg
-                            if displacement == 1:
-                                if type(obstacles[x_pr +  sign(obj.x - self.x)][y_pr]) == Obstacle:
-                                    flag = False
-                                    break
-                                x_pr += sign(obj.x - self.x)
-                                displacement = 0
-                            elif displacement >= 1:
-                                turn = 'x'
-                                displacement = (1 - displacement) * tg
             if flag and self.energy >= spell.energy:
                 return True
             else:

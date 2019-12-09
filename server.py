@@ -63,7 +63,7 @@ class GameApp:
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
-                if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
+                if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     print("@")
                     self.mage1.cast_spell(spell)
                     self.mage2.catch_spell(spell)
@@ -92,7 +92,7 @@ class GameApp:
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
-                if True or self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
+                if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage1):
                     print("@")
                     self.mage2.cast_spell(spell)
                     self.mage1.catch_spell(spell)
