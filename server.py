@@ -40,7 +40,7 @@ class GameApp:
         for i in range(self.field_height):
             for j in range(self.field_width):
                 if self.battle_field.field[i][j].type == 'Cell':
-                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(j) + ' ' + str(i) + ' '\
+                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(j) + ' ' + str(i) + ' ' \
                               + self.battle_field.field[i][j].image_id
                     con.write_message("server", message)
         message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + \
@@ -62,7 +62,7 @@ class GameApp:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
-            if spell_target is not None:
+            if spell_target is not None and spell_target.type == 'Mage':
                 if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     print("@")
                     self.mage1.cast_spell(spell)
@@ -74,13 +74,24 @@ class GameApp:
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
+            elif spell_target is not None and spell_target.type == 'Obstacle':
+                print("Obst")
+                if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
+                    self.mage1.cast_spell(spell)
+                    message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
+                    is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
+                    if is_broken:
+                        self.battle_field.delete_obstacle(click_x, click_y)
+                        # TODO send to client
+
         if turn == 'player2':
             spell_target = None
             if click_x == self.mage1.x and click_y == self.mage1.y:
                 spell_target = self.mage1
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
-            if spell_target is not None:
+            if spell_target is not None and spell_target.type == 'Mage':
                 if True or self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     print("@")
                     self.mage2.cast_spell(spell)
@@ -100,7 +111,7 @@ class GameApp:
                 self.mage1.cast_spell(spell)
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message('server', message)
-                self.battle_field.creat_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
+                self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
                 print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
@@ -111,7 +122,7 @@ class GameApp:
                 self.mage2.cast_spell(spell)
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message('server', message)
-                self.battle_field.creat_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
+                self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
                 print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
@@ -147,7 +158,7 @@ class GameApp:
                 self.defend(turn, spell, click_x, click_y)
 
     def process_key_message(self, splitted_message):
-        if len(splitted_message)>1:
+        if len(splitted_message) > 1:
             if splitted_message[1] == '0':
                 self.action_state = 'walk'
             elif splitted_message[1] == 't':

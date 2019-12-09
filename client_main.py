@@ -136,6 +136,9 @@ class ClientGameApp:
             print(a.x, a.y, a.img_id)
             a.canvas_id = self.draw_object(a, 'field')
             self.objects[a.client_id] = a
+        if list_of_words[0] == 'del':
+            self.field.delete(self.objects[int(list_of_words[1])])
+            del self.objects[int(list_of_words[1])]
         if list_of_words[0] == 'set_energy':
             self.set_energy(list_of_words[1], int(list_of_words[2]))
         if list_of_words[0] == 'set_health':
