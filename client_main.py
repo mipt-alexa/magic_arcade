@@ -38,6 +38,10 @@ class Object:
         self.y = y
 
 
+def pass_event(event):
+    pass
+
+
 def read_message():
     list_of_messages = con.read_message('client')
     return list_of_messages
@@ -166,6 +170,16 @@ class ClientGameApp:
         elif player == 'player2':
             self.interface.coords(self.health_bar2_id, window_width - health / BASIC_HEALTH * 200, 15, window_width, 15)
 
+    def end_game(self, winner):
+        self.unbind_all()
+        if winner == 'player1':
+            phrase = 'Player 1 won!'
+        elif winner == 'player2':
+            phrase = 'Player 2 won!'
+        print(phrase)
+        label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
+        label.pack()
+        label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
         list_of_words = message.split()
@@ -194,6 +208,9 @@ class ClientGameApp:
             self.draw_range_circle(int(list_of_words[1]), int(list_of_words[2]), int(list_of_words[3]))
         if list_of_words[0] == 'del_range_circle':
             self.del_range_circle()
+        if list_of_words[0] == 'end_game':
+            self.end_game(list_of_words[1])
+
 
     def draw_grid(self):
         """Рисует сетку и камушки"""
@@ -205,6 +222,10 @@ class ClientGameApp:
     def bind_all(self):
         self.field.bind('<Button-1>', click_processing)
         self.root.bind('<Key>', key_processing)
+
+    def unbind_all(self):
+        self.field.bind('<Button-1>', pass_event)
+        self.root.bind('<Key>', pass_event)
 
     def update(self):
         list_of_messages = read_message()
