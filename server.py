@@ -53,6 +53,7 @@ class GameApp:
         message = 'set_turn ' + 'player1'
         con.write_message('server', message)
 
+
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
@@ -63,7 +64,8 @@ class GameApp:
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
-                if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
+                print(self.battle_field.obstacles)
+                if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     print("@")
                     self.mage1.cast_spell(spell)
                     self.mage2.catch_spell(spell)
@@ -75,15 +77,15 @@ class GameApp:
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
             elif spell_target is not None and spell_target.type == 'Obstacle':
-                print("Obst")
                 if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
                     if is_broken:
+                        message = 'del ' + str(self.battle_field.obstacles[click_y][click_x].client_id)
+                        con.write_message('server', message)
                         self.battle_field.delete_obstacle(click_x, click_y)
-                        # TODO send to client
 
         if turn == 'player2':
             spell_target = None
@@ -103,6 +105,17 @@ class GameApp:
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
+            elif spell_target is not None and spell_target.type == 'Obstacle':
+                if True or self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
+                    self.mage2.cast_spell(spell)
+                    message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                    con.write_message('server', message)
+                    is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
+                    if is_broken:
+                        message = 'del ' + str(self.battle_field.obstacles[click_y][click_x].client_id)
+                        con.write_message('server', message)
+                        self.battle_field.delete_obstacle(click_x, click_y)
+
 
     def defend(self, turn, spell, click_x, click_y):
         print("defend")
