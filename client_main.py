@@ -8,7 +8,6 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 
-
 DT = 10
 """тик времени"""
 header_font = "Arial-16"
@@ -17,10 +16,10 @@ cell_size = 34
 """Размер клетки"""
 width = 15
 """ширина в клетках"""
-window_width = width*cell_size
+window_width = width * cell_size
 """Ширина окна"""
 height = 15
-window_height = height*cell_size
+window_height = height * cell_size
 """Высота окна"""
 interface_height = 100
 
@@ -73,6 +72,7 @@ class ClientGameApp:
         self.energy_bar2_id = None
         self.player1_turn_id = None
         self.player2_turn_id = None
+        self.range_circle_id = None
 
     def draw_object(self, obj, canv):
         if canv == 'field':
@@ -82,13 +82,23 @@ class ClientGameApp:
         return canvas_id
 
     def draw_range_circle(self, x, y, spell_range):
-        pass
+        screen_x = x * cell_size - 1 - 17
+        screen_y = y * cell_size - 1 - 17
+        screen_r = spell_range * cell_size
+        print(screen_x, screen_y, screen_r)
+        self.range_circle_id = self.field.create_oval(screen_x - screen_r, screen_y - screen_r, screen_x + screen_r,
+                                                      screen_y + screen_r, outline='red', width=4)
+        # self.range_circle_id = self.field.create_oval(0, 0, 34, 34, outline='red', width=4)
+
+    def del_range_circle(self):
+        self.field.delete(self.range_circle_id)
 
     def draw_bars(self):
         self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
         self.health_bar2_id = self.interface.create_line(window_width - 200, 15, window_width, 15, width=15, fill='red')
         self.energy_bar1_id = self.interface.create_line(0, 35, 200, 35, width=15, fill='grey')
-        self.energy_bar2_id = self.interface.create_line(window_width - 200, 35,  window_width, 35, width=15, fill='grey')
+        self.energy_bar2_id = self.interface.create_line(window_width - 200, 35, window_width, 35, width=15,
+                                                         fill='grey')
 
     def draw_turn(self):
         self.player1_turn_id = self.interface.create_rectangle(5, 55, 45, 95, fill='red')
@@ -130,8 +140,8 @@ class ClientGameApp:
         if list_of_words[0] == 'obj':
             a = Object()
             a.client_id = int(list_of_words[1])
-            a.x = int(list_of_words[2])*cell_size - 1
-            a.y = int(list_of_words[3])*cell_size - 1
+            a.x = int(list_of_words[2]) * cell_size - 1
+            a.y = int(list_of_words[3]) * cell_size - 1
             a.img_id = int(list_of_words[4])
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
@@ -176,13 +186,14 @@ app.bind_all()
 app.draw_grid()
 app.draw_bars()
 app.draw_turn()
+#app.draw_range_circle(5, 5, 1)
 # a = Object()
 # a.img_id = 1
 # a.x = 1
 # a.y = 1
 # a.canvas_id = app.draw_object(a)
-#img2 = img.get_image(4) #test
-#pp.field.create_image(34, 34, anchor=NW, image=img2) #test
+# img2 = img.get_image(4) #test
+# pp.field.create_image(34, 34, anchor=NW, image=img2) #test
 
 app.update()
 app.root.mainloop()
