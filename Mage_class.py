@@ -46,7 +46,7 @@ class Mage:
         else:
             return False
 
-    def check_spell(self, spell, obstacles = None, obj = None, , mage_2 = None):
+    def check_spell(self, spell, obstacles = None, obj = None, mage_2 = None):
         """
         метод проверяет, может ли маг вызвать заклинание.
         возвращает True, если да и False, если нет
