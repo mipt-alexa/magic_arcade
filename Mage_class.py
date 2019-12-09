@@ -22,7 +22,7 @@ def ca(x1, y1, x2, y2):
     """
     Косинус угла между векторами cos_angle
     """
-    return (x1 * y1 + x2 * y2) / ((x1 ** 2 + y1 ** 2) * (x2 ** 2 + y2 ** 2)) ** 2
+    return (x1 * x2 + y1 * y2) / ((x1 ** 2 + y1 ** 2) * (x2 ** 2 + y2 ** 2)) ** 2
 
 
 class Mage:
@@ -92,11 +92,13 @@ class Mage:
                                                                                                             dy) == 0
                     condition_2 = abs(
                         vm(x - 0.5, y - 0.5, dx, dy) + vm(x - 0.5, y + 0.5, dx, dy) + vm(x + 0.5, y + 0.5, dx, dy) + vm(
-                            x + 0.5, y - 0.5, dx, dy)) == abs(vm(x - 0.5, y - 0.5, dx, dy)) + abs(
+                            x + 0.5, y - 0.5, dx, dy)) != abs(vm(x - 0.5, y - 0.5, dx, dy)) + abs(
                         vm(x - 0.5, y + 0.5, dx, dy)) + abs(vm(x + 0.5, y + 0.5, dx, dy)) + abs(
                         vm(x + 0.5, y - 0.5, dx, dy))
+                    print(condition_1, condition_2, type(obstacles[x][y]) == Obstacle, ca(x - obj.x, y - obj.y, dx, dy) < 0)  # exp
+                    print(x - obj.x, y - obj.y, dx, dy)  # exp
                     if condition_1 or condition_2:
-                        if type(obstacles[x][y]) == Obstacle:
+                        if type(obstacles[x][y]) == Obstacle and ca(x - obj.x, y - obj.y, dx, dy) < 0:
                             flag = False
                             k = 1
                             break
