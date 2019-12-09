@@ -66,44 +66,50 @@ class Mage:
             if (obj.x == mage_2.x and obj.y == mage_2.y) or (type(obstacles[obj.x][obj.y]) == Obstacle):
                 return False
             else:
-                return True
+                if (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2 <= spell.spell_range ** 2:
+                    return True
+                else:
+                    return False
         elif spell.spell_type == 'attack_directed':
             flag = True
             """
             Проверка на наличие препятствия между целью и стреляющим
             """
-            dx = obj.x - self.x
-            dy = obj.y - self.y
-            k = 0
-            for x in range(10):
-                if k == 1:
-                    break
-                for y in range(10):
-                    if (x == obj.x and y == obj.y) or (x == self.x and y == self.y):
-                        continue
-                    if ca(x - 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y + 0.5,
-                                                                                                      dx,
-                                                                                                      dy) <= 0 and ca(
-                            x - 0.5, y + 0.5, dx, dy) <= 0:
-                        continue
-                    condition_1 = vm(x - 0.5, y - 0.5, dx, dy) * vm(x - 0.5, y + 0.5, dx, dy) * vm(x + 0.5, y + 0.5, dx,
-                                                                                                   dy) * vm(x + 0.5,
-                                                                                                            y - 0.5, dx,
-                                                                                                            dy) == 0
-                    condition_2 = abs(
-                        vm(x - 0.5, y - 0.5, dx, dy) + vm(x - 0.5, y + 0.5, dx, dy) + vm(x + 0.5, y + 0.5, dx, dy) + vm(
-                            x + 0.5, y - 0.5, dx, dy)) != abs(vm(x - 0.5, y - 0.5, dx, dy)) + abs(
-                        vm(x - 0.5, y + 0.5, dx, dy)) + abs(vm(x + 0.5, y + 0.5, dx, dy)) + abs(
-                        vm(x + 0.5, y - 0.5, dx, dy))
-                    print(condition_1, condition_2, type(obstacles[x][y]) == Obstacle, ca(x - obj.x, y - obj.y, dx, dy) < 0)  # exp
-                    print(x - obj.x, y - obj.y, dx, dy)  # exp
-                    if condition_1 or condition_2:
-                        if type(obstacles[x][y]) == Obstacle and ca(x - obj.x, y - obj.y, dx, dy) < 0:
-                            flag = False
-                            k = 1
-                            break
+            # dx = obj.x - self.x
+            # dy = obj.y - self.y
+            # k = 0
+            # for x in range(10):
+            #     if k == 1:
+            #         break
+            #     for y in range(10):
+            #         if (x == obj.x and y == obj.y) or (x == self.x and y == self.y):
+            #             continue
+            #         if ca(x - 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y + 0.5,
+            #                                                                                           dx,
+            #                                                                                           dy) <= 0 and ca(
+            #                 x - 0.5, y + 0.5, dx, dy) <= 0:
+            #             continue
+            #         condition_1 = vm(x - 0.5, y - 0.5, dx, dy) * vm(x - 0.5, y + 0.5, dx, dy) * vm(x + 0.5, y + 0.5, dx,
+            #                                                                                        dy) * vm(x + 0.5,
+            #                                                                                                 y - 0.5, dx,
+            #                                                                                                 dy) == 0
+            #         condition_2 = abs(
+            #             vm(x - 0.5, y - 0.5, dx, dy) + vm(x - 0.5, y + 0.5, dx, dy) + vm(x + 0.5, y + 0.5, dx, dy) + vm(
+            #                 x + 0.5, y - 0.5, dx, dy)) != abs(vm(x - 0.5, y - 0.5, dx, dy)) + abs(
+            #             vm(x - 0.5, y + 0.5, dx, dy)) + abs(vm(x + 0.5, y + 0.5, dx, dy)) + abs(
+            #             vm(x + 0.5, y - 0.5, dx, dy))
+            #         print(condition_1, condition_2, type(obstacles[x][y]) == Obstacle, ca(x - obj.x, y - obj.y, dx, dy) < 0)  # exp
+            #         print(x - obj.x, y - obj.y, dx, dy)  # exp
+            #         if condition_1 or condition_2:
+            #             if type(obstacles[x][y]) == Obstacle and ca(x - obj.x, y - obj.y, dx, dy) < 0:
+            #                 flag = False
+            #                 k = 1
+            #                 break
             if flag and self.energy >= spell.energy:
-                return True
+                if (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2 <= spell.spell_range ** 2:
+                    return True
+                else:
+                    return False
             else:
                 return False
 

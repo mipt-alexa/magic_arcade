@@ -115,8 +115,8 @@ class ClientGameApp:
     #         self.draw_object(obj, 'field')
 
     def draw_range_circle(self, x, y, spell_range):
-        screen_x = x * cell_size - 17
-        screen_y = y * cell_size - 17
+        screen_x = (x + 1) * cell_size - 17
+        screen_y = (y + 1) * cell_size - 17
         screen_r = spell_range * cell_size
         print(screen_x, screen_y, screen_r)
         self.range_circle_id = self.field.create_oval(screen_x - screen_r, screen_y - screen_r, screen_x + screen_r,

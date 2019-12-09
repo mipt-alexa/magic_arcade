@@ -15,7 +15,7 @@ class BattleField:
         for i in range(height):
             self.field.append([])
             for j in range(width):
-                cell = Cell(id_giver.new_id())
+                cell = Cell(j, i, id_giver.new_id())
                 self.field[i].append(cell)
         for i in range(height):
             self.obstacles.append([])

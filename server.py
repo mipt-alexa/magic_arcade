@@ -55,7 +55,6 @@ class GameApp:
         message = 'set_turn ' + 'player1'
         con.write_message('server', message)
 
-
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
@@ -67,7 +66,7 @@ class GameApp:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
                 print(self.battle_field.obstacles)
-                if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
+                if  self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     print("@")
                     self.mage1.cast_spell(spell)
                     self.mage2.catch_spell(spell)
@@ -79,7 +78,7 @@ class GameApp:
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
             elif spell_target is not None and spell_target.type == 'Obstacle':
-                if True or self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
+                if  self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
@@ -108,7 +107,7 @@ class GameApp:
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
             elif spell_target is not None and spell_target.type == 'Obstacle':
-                if True or self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
+                if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage2.cast_spell(spell)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
@@ -121,7 +120,7 @@ class GameApp:
     def defend(self, turn, spell, click_x, click_y):
         print("defend")
         if turn == 'player1':
-            if True or self.mage1.check_spell(spell, self.battle_field.obstacles):
+            if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x], self.mage2):
                 self.mage1.cast_spell(spell)
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message('server', message)
@@ -129,10 +128,9 @@ class GameApp:
                 print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
-                print(message)
                 con.write_message('server', message)
         elif turn == 'player2':
-            if True or self.mage2.check_spell(spell, self.battle_field.obstacles):
+            if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x], self.mage2):
                 self.mage2.cast_spell(spell)
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message('server', message)
@@ -178,6 +176,9 @@ class GameApp:
                 message = 'del_range_circle'
                 con.write_message('server', message)
             elif splitted_message[1] == 't':
+                message = 'del_range_circle'
+                con.write_message('server', message)
+                self.action_state = 'walk'
                 if self.game_status == 'player1_turn':
                     self.game_status = 'player2_turn'
                     message = 'set_turn ' + 'player2'
@@ -192,7 +193,7 @@ class GameApp:
                     self.mage2.energy = min(self.mage2.energy + 80, mg.BASIC_ENERGY)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
-            else:
+            elif ord(splitted_message[1][0]) - ord('0') >= 1 and ord(splitted_message[1][0]) - ord('0') <= 9:
                 message = 'del_range_circle'
                 con.write_message('server', message)
                 self.action_state = 'spell ' + str(splitted_message[1])

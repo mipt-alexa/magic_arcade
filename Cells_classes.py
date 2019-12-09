@@ -7,7 +7,9 @@ class Cell:
     В зависимости от дальнейшей реализации может содержать id визуального объекта с ним связанного.
     """
 
-    def __init__(self, client_id):
+    def __init__(self, x, y, client_id):
+        self.x = x
+        self.y = y
         self.type = 'Cell'
         self.client_id = client_id
         self.image_id = '1'
