@@ -81,6 +81,8 @@ class ClientGameApp:
             canvas_id = self.interface.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
 
+    def draw_range_circle(self, x, y, spell_range):
+        pass
 
     def draw_bars(self):
         self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
