@@ -18,11 +18,13 @@ def vm(x1, y1, x2, y2):
     return x1 * y2 - x2 * y1
 
 
-def ca(x1, y1, x2, y2):
-    """
-    Косинус угла между векторами cos_angle
-    """
-    return (x1 * x2 + y1 * y2) / ((x1 ** 2 + y1 ** 2) * (x2 ** 2 + y2 ** 2)) ** 2
+def sign(x):
+    if x > 0:
+        return 1
+    elif x < 0:
+        return -1
+    else:
+        return 0
 
 
 class Mage:
@@ -63,7 +65,7 @@ class Mage:
                 return False
 
         elif spell.spell_type == 'defend_directed':
-            if (obj.x == mage_2.x and obj.y == mage_2.y) or (type(obstacles[obj.x][obj.y]) == Obstacle):
+            if (obj.x == mage_2.x and obj.y == mage_2.y) or obstacles[obj.y][obj.x] is not None:
                 return False
             else:
                 if (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2 <= spell.spell_range ** 2:
@@ -75,36 +77,23 @@ class Mage:
             """
             Проверка на наличие препятствия между целью и стреляющим
             """
-            # dx = obj.x - self.x
-            # dy = obj.y - self.y
-            # k = 0
-            # for x in range(10):
-            #     if k == 1:
-            #         break
-            #     for y in range(10):
-            #         if (x == obj.x and y == obj.y) or (x == self.x and y == self.y):
-            #             continue
-            #         if ca(x - 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y - 0.5, dx, dy) <= 0 and ca(x + 0.5, y + 0.5,
-            #                                                                                           dx,
-            #                                                                                           dy) <= 0 and ca(
-            #                 x - 0.5, y + 0.5, dx, dy) <= 0:
-            #             continue
-            #         condition_1 = vm(x - 0.5, y - 0.5, dx, dy) * vm(x - 0.5, y + 0.5, dx, dy) * vm(x + 0.5, y + 0.5, dx,
-            #                                                                                        dy) * vm(x + 0.5,
-            #                                                                                                 y - 0.5, dx,
-            #                                                                                                 dy) == 0
-            #         condition_2 = abs(
-            #             vm(x - 0.5, y - 0.5, dx, dy) + vm(x - 0.5, y + 0.5, dx, dy) + vm(x + 0.5, y + 0.5, dx, dy) + vm(
-            #                 x + 0.5, y - 0.5, dx, dy)) != abs(vm(x - 0.5, y - 0.5, dx, dy)) + abs(
-            #             vm(x - 0.5, y + 0.5, dx, dy)) + abs(vm(x + 0.5, y + 0.5, dx, dy)) + abs(
-            #             vm(x + 0.5, y - 0.5, dx, dy))
-            #         print(condition_1, condition_2, type(obstacles[x][y]) == Obstacle, ca(x - obj.x, y - obj.y, dx, dy) < 0)  # exp
-            #         print(x - obj.x, y - obj.y, dx, dy)  # exp
-            #         if condition_1 or condition_2:
-            #             if type(obstacles[x][y]) == Obstacle and ca(x - obj.x, y - obj.y, dx, dy) < 0:
-            #                 flag = False
-            #                 k = 1
-            #                 break
+            print("Start_checking", len(obstacles), len(obstacles[0]))
+            for i in range(len(obstacles)):
+                for j in range(len(obstacles[0])):
+                    if obstacles[i][j] is not None:
+                        vl = [obj.x - self.x, obj.y - self.y]
+                        v1 = [j - 0.5 - self.x, i - 0.5 - self.y]
+                        v2 = [j - 0.5 - self.x, i + 0.5 - self.y]
+                        v3 = [j + 0.5 - self.x, i - 0.5 - self.y]
+                        v4 = [j + 0.5 - self.x, i + 0.5 - self.y]
+                        vm1 = vm(vl[0], vl[1], v1[0], v1[1])
+                        vm2 = vm(vl[0], vl[1], v2[0], v2[1])
+                        vm3 = vm(vl[0], vl[1], v3[0], v3[1])
+                        vm4 = vm(vl[0], vl[1], v4[0], v4[1])
+                        if not (vm1 * vm2 * vm3 * vm4 != 0 and abs(sign(vm1) + sign(vm2) + sign(vm3) + sign(vm4)) == 4):
+                            flag = False
+
+
             if flag and self.energy >= spell.energy:
                 if (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2 <= spell.spell_range ** 2:
                     return True

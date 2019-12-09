@@ -10,8 +10,8 @@ class BattleField:
     def __init__(self, width, height, id_giver):
         self.width = width
         self.height = height
-        self.field = [[]]
-        self.obstacles = [[]]
+        self.field = []
+        self.obstacles = []
         for i in range(height):
             self.field.append([])
             for j in range(width):
