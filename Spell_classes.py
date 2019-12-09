@@ -37,9 +37,10 @@ class DefendDirectSpell(DirectSpell):
     """
     Защищающее направленное заклинание, например создает препятствие в выбранной клетке
     """
-    def __init__(self, name, energy, range):
+    def __init__(self, name, energy, range, obstacle_health):
         super().__init__(name, energy, range)
         self.spell_type = 'defend_directed'
+        self.obstacle_health = obstacle_health
 
 
 

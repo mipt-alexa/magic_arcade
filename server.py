@@ -6,7 +6,7 @@ import time
 from Spell_book import spell_book
 
 root = tk.Tk()
-DT = 10
+DT = 30
 
 
 def read_message():
@@ -30,19 +30,24 @@ class GameApp:
         self.field_height = field_height
         self.battle_field = bf.BattleField(field_width, field_height, self.id_giver)
         self.mage1 = mg.Mage(0, 0, self.id_giver.new_id())
+        self.mage1.image_id = '3'
         self.action_state = 'walk'
         self.mage2 = mg.Mage(field_height - 1, field_width - 1, self.id_giver.new_id())
+        self.mage2.image_id = '4'
         self.game_status = 'none'
 
     def initialise_game(self):
         for i in range(self.field_height):
             for j in range(self.field_width):
                 if self.battle_field.field[i][j].type == 'Cell':
-                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(i) + ' ' + str(j) + ' ' + '1'
+                    message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(j) + ' ' + str(i) + ' '\
+                              + self.battle_field.field[i][j].image_id
                     con.write_message("server", message)
-        message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + '3'
+        message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + \
+                  self.mage1.image_id
         con.write_message('server', message)
-        message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + '4'
+        message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + \
+                  self.mage2.image_id
         con.write_message('server', message)
         self.game_status = 'player1_turn'
         message = 'set_turn ' + 'player1'
@@ -88,29 +93,58 @@ class GameApp:
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
 
+    def defend(self, turn, spell, click_x, click_y):
+        print("defend")
+        if turn == 'player1':
+            if True or self.mage1.check_spell(spell, self.battle_field.obstacles):
+                self.mage1.cast_spell(spell)
+                message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                con.write_message('server', message)
+                self.battle_field.creat_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
+                print(self.battle_field.obstacles[click_y][click_x])
+                message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
+                          ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
+                print(message)
+                con.write_message('server', message)
+        elif turn == 'player2':
+            if True or self.mage2.check_spell(spell, self.battle_field.obstacles):
+                self.mage2.cast_spell(spell)
+                message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                con.write_message('server', message)
+                self.battle_field.creat_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
+                print(self.battle_field.obstacles[click_y][click_x])
+                message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
+                          ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
+                print(message)
+                con.write_message('server', message)
+
     def process_click_message(self, turn, splitted_message):
         click_x = int(splitted_message[1])
         click_y = int(splitted_message[2])
         if self.action_state == 'walk':
             if turn == 'player1':
-                if self.mage1.check_move(click_x, click_y):
+                if self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
-                    message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + '3'
+                    message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) \
+                              + ' ' + self.mage1.image_id
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
             if turn == 'player2':
-                if self.mage2.check_move(click_x, click_y):
+                if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
-                    message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) + ' ' + '4'
+                    message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) \
+                              + ' ' + self.mage2.image_id
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
         if self.action_state[:2] == 'sp':
             spell_number = int((self.action_state.split())[1])
             spell = spell_book[spell_number]
-            self.attack(turn, spell, click_x, click_y)
-
+            if spell.spell_type == 'attack_directed':
+                self.attack(turn, spell, click_x, click_y)
+            elif spell.spell_type == 'defend_directed':
+                self.defend(turn, spell, click_x, click_y)
 
     def process_key_message(self, splitted_message):
         if len(splitted_message)>1:

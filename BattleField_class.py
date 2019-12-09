@@ -27,19 +27,21 @@ class BattleField:
         """
         метод отвечает за поподание мага по препятствию
         """
-        if self.obstacles[x][y].health <= health_damage:
+        if self.obstacles[y][x].health <= health_damage:
             self.delete_obstacles(x, y)
+            return True
         else:
-            self.obstacles[x][y].health -= health_damage  # KISS
+            self.obstacles[y][x].health -= health_damage
+            return False
 
-    def delete_obstacles(self, x, y):
+    def delete_obstacle(self, x, y):
         """
         метод отвечает за удаление препятствия
         """
-        self.obstacles[x][y] = None
+        self.obstacles[y][x] = None
 
-    def creat_obstacles(self, x, y, id_giver):
+    def creat_obstacle(self, x, y, id_giver, health):
         """
         метод отвечает за создание препятствия
         """
-        self.obstacles[x][y] = Obstacle(id_giver.new_id())
+        self.obstacles[y][x] = Obstacle(id_giver.new_id(), health)

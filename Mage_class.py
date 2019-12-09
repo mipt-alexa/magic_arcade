@@ -20,6 +20,7 @@ class Mage:
         self.health = health
         self.energy = energy
         self.client_id = client_id
+        self.image_id = None
 
     def move(self, dx, dy):
         if self.energy >= STEP_ENERGY:
@@ -27,9 +28,12 @@ class Mage:
             self.y += dy
             self.energy -= STEP_ENERGY
 
-    def check_move(self, click_x, click_y):
+    def check_move(self, click_x, click_y, obstacles, another_mage):
         if (abs(click_x - self.x) == 1 and abs(click_y - self.y) == 0) or (abs(click_x - self.x) == 0 and abs(click_y - self.y) == 1):
-            return True
+            if obstacles[click_y][click_x] is None and not (click_x == another_mage.x and click_y == another_mage.y):
+                return True
+            else:
+                return False
         else:
             return False
 
@@ -43,7 +47,7 @@ class Mage:
                 return True
             else:
                 return False
-        elif spell.spell_type == 'directed':
+        elif spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
             flag = True
             """
             Проверка того, есть ли между Mage и obj, на которое применяют магию препятствия
