@@ -46,7 +46,7 @@ class Mage:
         else:
             return False
 
-    def check_spell(self, spell, obstacles=None, obj=None):
+    def check_spell(self, spell, obstacles = None, obj = None, , mage_2 = None):
         """
         метод проверяет, может ли маг вызвать заклинание.
         возвращает True, если да и False, если нет
@@ -56,8 +56,16 @@ class Mage:
                 return True
             else:
                 return False
+        elif spell.spell_type == 'defend_directed':
+            if (obj.x == mage_2.x and obj.y == mage_2.y) or (type(obstacles[obj.x][obj.y]) == Obstacle):
+                return False
+            else:
+                return True
         elif spell.spell_type == 'directed':
             flag = True
+            """
+            Проверка на наличие препятствия между целью и стреляющим
+            """
             dx = obj.x - self.x
             dy = obj.y - self.y
             k = 0
