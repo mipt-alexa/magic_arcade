@@ -1,4 +1,4 @@
-from Cells_classes import Cell
+from Cells_classes import Cell, Obstacle
 
 
 """
@@ -7,7 +7,7 @@ from Cells_classes import Cell
 
 
 class BattleField:
-    def __init__(self, width, height, obstacles_number, id_giver):
+    def __init__(self, width, height, id_giver):
         self.width = width
         self.height = height
         self.field = [[]]
@@ -17,5 +17,29 @@ class BattleField:
             for j in range(width):
                 cell = Cell(id_giver.new_id())
                 self.field[i].append(cell)
-        for i in range(obstacles_number):
-            pass
+        for i in range(height):
+            self.obstacles.append([])
+            for j in range(width):
+                obstacle = None
+                self.obstacles[i].append(obstacle)
+
+    def attack_obstacle(self, health_damage, x, y):
+        """
+        метод отвечает за поподание мага по препятствию
+        """
+        if self.obstacles[x][y].health <= health_damage:
+            self.delete_obstacles(x, y)
+        else:
+            self.obstacles[x][y].health -= health_damage  # KISS
+
+    def delete_obstacles(self, x, y):
+        """
+        метод отвечает за удаление препятствия
+        """
+        self.obstacles[x][y] = None
+
+    def creat_obstacles(self, x, y, id_giver):
+        """
+        метод отвечает за создание препятствия
+        """
+        self.obstacles[x][y] = Obstacle(id_giver.new_id())

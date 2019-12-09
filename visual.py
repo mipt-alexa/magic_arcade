@@ -5,8 +5,6 @@ from Cells_classes import *
 from Spell_classes import *
 
 
-
-
 def create_field_image():
     """Создаёт картинку клеточного поля""" #TODO
     pass
