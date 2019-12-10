@@ -5,7 +5,7 @@ from BattleField_class import Obstacle
 BASIC_HEALTH = 100
 BASIC_ENERGY = 100
 STEP_ENERGY = 20
-
+# -*- coding: utf-8 -*-
 """
 Класс маг, класс персонажа, которым управляет игрок
 """
@@ -74,13 +74,20 @@ class Mage:
                     return False
         elif spell.spell_type == 'attack_directed':
             flag = True
+            if not (spell.destination == obj.type or spell.destination == 'Both'):
+                flag = False
             """
             Проверка на наличие препятствия между целью и стреляющим
             """
             print("Start_checking", len(obstacles), len(obstacles[0]))
-            for i in range(len(obstacles)):
-                for j in range(len(obstacles[0])):
-                    if obstacles[i][j] is not None:
+            i1 = min(self.y, obj.y)
+            i2 = max(self.y, obj.y)
+            j1 = min(self.x, obj.x)
+            j2 = max(self.x, obj.x)
+            for i in range(i1, i2+1):
+                for j in range(j1, j2+1):
+                    if obstacles[i][j] is not None and not (i == obj.y and j == obj.x):
+                        print(i, j)
                         vl = [obj.x - self.x, obj.y - self.y]
                         v1 = [j - 0.5 - self.x, i - 0.5 - self.y]
                         v2 = [j - 0.5 - self.x, i + 0.5 - self.y]
@@ -90,9 +97,9 @@ class Mage:
                         vm2 = vm(vl[0], vl[1], v2[0], v2[1])
                         vm3 = vm(vl[0], vl[1], v3[0], v3[1])
                         vm4 = vm(vl[0], vl[1], v4[0], v4[1])
+                        print(vm1, vm2, vm3, vm4)
                         if not (vm1 * vm2 * vm3 * vm4 != 0 and abs(sign(vm1) + sign(vm2) + sign(vm3) + sign(vm4)) == 4):
                             flag = False
-
 
             if flag and self.energy >= spell.energy:
                 if (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2 <= spell.spell_range ** 2:

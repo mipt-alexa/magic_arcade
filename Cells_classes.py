@@ -1,5 +1,6 @@
 OBSTACLE_BASIC_HEALTH = 20
-
+# !/usr/bin/python
+# coding=utf-8
 
 class Cell:
     """

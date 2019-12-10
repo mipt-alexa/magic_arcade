@@ -1,4 +1,5 @@
-﻿def read_message(who):  # who - кто сообщение вызывает
+﻿# -*- coding: utf-8 -*-
+def read_message(who):  # who - кто сообщение вызывает
     # принимает значения: "client", "server" 
     """
     Отвечает за чтение сообщения

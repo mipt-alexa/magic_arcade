@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import Spell_classes as sp
 spell_book = []
 for i in range(10):

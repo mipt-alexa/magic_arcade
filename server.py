@@ -4,7 +4,8 @@ import connection as con
 import tkinter as tk
 import time
 from Spell_book import spell_book
-
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 root = tk.Tk()
 DT = 30
 
