@@ -8,6 +8,7 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 import subprocess
+# -*- coding: utf-8 -*-
 ANIM_DT = 10
 DT = 30
 """тик времени"""
@@ -257,7 +258,8 @@ class ClientGameApp:
         self.root.after(DT, self.update)
 
     def start_game(self):
-        os.system('python server.py')
+        cmd = 'python server.py'
+        subprocess.Popen(cmd, shell = True)
 
 
 app = ClientGameApp()

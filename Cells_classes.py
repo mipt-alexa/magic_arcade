@@ -1,5 +1,5 @@
 OBSTACLE_BASIC_HEALTH = 20
-
+# -*- coding: utf-8 -*-
 
 class Cell:
     """

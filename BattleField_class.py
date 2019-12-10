@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Cells_classes import Cell, Obstacle
 
 
