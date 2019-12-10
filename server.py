@@ -66,19 +66,23 @@ class GameApp:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
                 print(self.battle_field.obstacles)
-                if  self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
-                    print("@")
+                if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     self.mage1.cast_spell(spell)
                     self.mage2.catch_spell(spell)
-                    print(self.mage2.health)
                     message = 'set_health ' + 'player2 ' + str(self.mage2.health)
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
+                    if self.mage2.health <= 0:
+                        message = 'del ' + str(self.mage2.client_id)
+                        con.write_message('server', message)
+                        message = 'end_game player1'
+                        con.write_message('server', message)
+                        self.game_status = 'end_game'
             elif spell_target is not None and spell_target.type == 'Obstacle':
-                if  self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
+                if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
@@ -106,6 +110,12 @@ class GameApp:
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
+                    if self.mage1.health <= 0:
+                        message = 'del ' + str(self.mage1.client_id)
+                        con.write_message('server', message)
+                        message = 'end_game player2'
+                        con.write_message('server', message)
+                        self.game_status = 'end_game'
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage2.cast_spell(spell)
