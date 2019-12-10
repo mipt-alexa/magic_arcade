@@ -1,6 +1,6 @@
 from tkinter import *
 from PIL import ImageTk,Image
-
+# -*- coding: utf-8 -*-
 
 """ 1 = камушки """
 """ 2  = стена """
