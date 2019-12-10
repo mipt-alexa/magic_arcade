@@ -202,6 +202,7 @@ class ClientGameApp:
         label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
+
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
         list_of_words = message.split()
@@ -282,6 +283,6 @@ app.draw_turn()
 #app.field.delete(a.canvas_id)
 # img2 = img.get_image(4) #test
 # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-app.start_game()
+#app.start_game()
 app.update()
 app.root.mainloop()
