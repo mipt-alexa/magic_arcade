@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import tkinter
 import math
 import time
@@ -8,8 +10,6 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 import subprocess
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 ANIM_DT = 10
 DT = 30
 """тик времени"""
@@ -110,34 +110,34 @@ class ClientGameApp:
             canvas_id = self.interface.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
 
-    # def animate_object(self, obj, x2, y2, animation_time):
-    #     """
-    #     Передвигает уже нарисованные объект
-    #     :param obj: объект
-    #     :param x2: x клетки назначения
-    #     :param y2: y клетки назначения
-    #     :param animation_time: время анимации в ms
-    #     :return:
-    #     """
-    #     screen_x1 = obj.x
-    #     screen_y1 = obj.y
-    #     screen_x2 = x2 * cell_size
-    #     screen_y2 = y2 * cell_size
-    #     self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
+    def animate_object(self, obj, x2, y2, animation_time):
+        """
+        Передвигает уже нарисованные объект
+        :param obj: объект
+        :param x2: x клетки назначения
+        :param y2: y клетки назначения
+        :param animation_time: время анимации в ms
+        :return:
+        """
+        screen_x1 = obj.x
+        screen_y1 = obj.y
+        screen_x2 = x2 * cell_size
+        screen_y2 = y2 * cell_size
+        self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
 
-    # def move(self, obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
-    #     cr_time += ANIM_DT
-    #     x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
-    #     y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
-    #     obj.set_coords(x, y)
-    #     self.field.delete(obj.canvas_id)
-    #     obj.canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
-    #     if cr_time <= animation_time:
-    #         self.root.after(ANIM_DT, lambda: self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
-    #     else:
-    #         self.field.delete(obj.canvas_id)
-    #         obj.set_coords(screen_x2, screen_y2)
-    #         self.draw_object(obj, 'field')
+    def move(self, obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
+        cr_time += ANIM_DT
+        x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
+        y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
+        obj.set_coords(x, y)
+        self.field.delete(obj.canvas_id)
+        obj.canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
+        if cr_time <= animation_time:
+            self.root.after(ANIM_DT, lambda: self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
+        else:
+            self.field.delete(obj.canvas_id)
+            obj.set_coords(screen_x2, screen_y2)
+            self.draw_object(obj, 'field')
 
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
@@ -234,7 +234,6 @@ class ClientGameApp:
         if list_of_words[0] == 'end_game':
             self.end_game(list_of_words[1])
 
-
     def draw_grid(self):
         """Рисует сетку и камушки"""
         for i in range(0, window_width // cell_size + 1, 1):
@@ -261,7 +260,7 @@ class ClientGameApp:
 
     def start_game(self):
         cmd = 'python server.py'
-        subprocess.Popen(cmd, shell = True)
+        subprocess.Popen(cmd, shell=True)
 
 
 app = ClientGameApp()

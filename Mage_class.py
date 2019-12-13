@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 from numpy import sign
 import Spell_classes
 from BattleField_class import Obstacle
@@ -5,7 +7,7 @@ from BattleField_class import Obstacle
 BASIC_HEALTH = 100
 BASIC_ENERGY = 100
 STEP_ENERGY = 20
-# -*- coding: utf-8 -*-
+
 """
 Класс маг, класс персонажа, которым управляет игрок
 """
