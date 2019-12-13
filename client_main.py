@@ -12,7 +12,6 @@ import images as img
 
 CONN = con.start_connection_client()
 """константа связи, работает во всех случаях передачи и чтения сообщений"""
-=======
 import subprocess
 ANIM_DT = 10
 DT = 30
