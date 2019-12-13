@@ -7,6 +7,13 @@ import connection as con
 from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
+
+
+
+CONN = con.start_connection_client()
+"""константа связи, работает во всех случаях передачи и чтения сообщений"""
+=======
+import subprocess
 ANIM_DT = 10
 DT = 30
 """тик времени"""
@@ -22,14 +29,17 @@ height = 15
 window_height = height * cell_size
 """Высота окна"""
 interface_height = 100
-import time
+
 
 class Object:
+    """
+    Класс объекта на экране
+    Хранит координаты в пикселях, id объекта как объекта на сервере, id картинки, id на canvas
+    """
     def __init__(self):
         self.x = 0
         self.y = 0
         self.client_id = None
-        self.color = ''
         self.img_id = None
         self.canvas_id = None
 
@@ -38,12 +48,31 @@ class Object:
         self.y = y
 
 
+def pass_event(event):
+    pass
+
+
 def read_message():
+    message = con.read_message(CONN)
+    return message
+
+
+def send_message(message):
+    con.write_message_client(CONN, message)
+    """
+    считывает сообщение с сервера
+    :return:
+    """
     list_of_messages = con.read_message('client')
     return list_of_messages
 
 
 def send_message(message):
+    """
+    отправляет данные на сервер
+    :param message:
+    :return:
+    """
     con.write_message('client', message)
 
 
@@ -56,12 +85,14 @@ def click_processing(event):
 
 
 def key_processing(event):
+    """Обрабатывает нажатие на клавишу"""
     key = event.char
     message_to_server = 'key ' + key
     send_message(message_to_server)
 
 
 class ClientGameApp:
+    """Основной класс прлиожения"""
     def __init__(self):
         self.root = tkinter.Tk()
         self.root.wm_title("Magic!")
@@ -79,6 +110,10 @@ class ClientGameApp:
         self.range_circle_id = None
 
     def draw_object(self, obj, canv):
+        """
+        Рисует объект obj на canv
+        Возвращает id на канвасе
+        """
         if canv == 'field':
             canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         elif canv == 'interface':
@@ -126,6 +161,7 @@ class ClientGameApp:
         self.field.delete(self.range_circle_id)
 
     def draw_bars(self):
+
         self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
         self.health_bar2_id = self.interface.create_line(window_width - 200, 15, window_width, 15, width=15, fill='red')
         self.energy_bar1_id = self.interface.create_line(0, 35, 200, 35, width=15, fill='grey')
@@ -166,6 +202,17 @@ class ClientGameApp:
         elif player == 'player2':
             self.interface.coords(self.health_bar2_id, window_width - health / BASIC_HEALTH * 200, 15, window_width, 15)
 
+    def end_game(self, winner):
+        self.unbind_all()
+        if winner == 'player1':
+            phrase = 'Player 1 won!'
+        elif winner == 'player2':
+            phrase = 'Player 2 won!'
+        print(phrase)
+        label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
+        label.pack()
+        label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
+
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
         list_of_words = message.split()
@@ -194,6 +241,9 @@ class ClientGameApp:
             self.draw_range_circle(int(list_of_words[1]), int(list_of_words[2]), int(list_of_words[3]))
         if list_of_words[0] == 'del_range_circle':
             self.del_range_circle()
+        if list_of_words[0] == 'end_game':
+            self.end_game(list_of_words[1])
+
 
     def draw_grid(self):
         """Рисует сетку и камушки"""
@@ -206,14 +256,22 @@ class ClientGameApp:
         self.field.bind('<Button-1>', click_processing)
         self.root.bind('<Key>', key_processing)
 
+    def unbind_all(self):
+        self.field.bind('<Button-1>', pass_event)
+        self.root.bind('<Key>', pass_event)
+
     def update(self):
-        list_of_messages = read_message()
-        if len(list_of_messages) > 0:
-            for message in list_of_messages:
-                if message == '':
-                    continue
+        message = read_message()
+        if len(message) > 0:
+            if message == '':
+                pass
+            else:
                 self.process_message(message)
         self.root.after(DT, self.update)
+
+    def start_game(self):
+        cmd = 'python server.py'
+        subprocess.Popen(cmd, shell = True)
 
 
 app = ClientGameApp()
@@ -235,6 +293,6 @@ app.draw_turn()
 #app.field.delete(a.canvas_id)
 # img2 = img.get_image(4) #test
 # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-
+#app.start_game()
 app.update()
 app.root.mainloop()
