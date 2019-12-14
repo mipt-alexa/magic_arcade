@@ -7,18 +7,19 @@
 
 
 class Spell:
-    def __init__(self, name, energy):
+    def __init__(self, name, energy, menu_image_id):
         self.type = 'spell'
         self.energy = energy
         self.name = name
+        self.menu_image_id = menu_image_id
 
 
 class DirectSpell(Spell):
     """
     Класс направленного заклинания, которое применяется на некоторый объект (маг ил препятствие) или клетку
     """
-    def __init__(self, name, energy, spell_range):
-        super().__init__(name, energy)
+    def __init__(self, name, energy, menu_image_id, spell_range):
+        super().__init__(name, energy, menu_image_id)
         self.spell_range = spell_range
 
 
@@ -26,8 +27,8 @@ class AttackDirectSpell(DirectSpell):
     """
     Направленное заклинание, наносящее урон
     """
-    def __init__(self, name, energy, spell_range, health_damage, energy_damage, destination):
-        super().__init__(name, energy, spell_range)
+    def __init__(self, name, energy, menu_image_id, spell_range, health_damage, energy_damage, destination):
+        super().__init__(name, energy, menu_image_id, spell_range)
         self.spell_type = 'attack_directed'
         self.destination = destination # тип объекта на который может быть направленно заклинание(Mage, Obstacle, Both)
         self.health_damage = health_damage
@@ -38,8 +39,8 @@ class DefendDirectSpell(DirectSpell):
     """
     Защищающее направленное заклинание, например создает препятствие в выбранной клетке
     """
-    def __init__(self, name, energy, spell_range, obstacle_health):
-        super().__init__(name, energy, spell_range)
+    def __init__(self, name, energy, menu_image_id, spell_range, obstacle_health):
+        super().__init__(name, energy, menu_image_id, spell_range)
         self.spell_type = 'defend_directed'
         self.obstacle_health = obstacle_health
 

@@ -32,10 +32,10 @@ class GameApp:
         self.field_height = field_height
         self.battle_field = bf.BattleField(field_width, field_height, self.id_giver)
         self.mage1 = mg.Mage(0, 0, self.id_giver.new_id())
-        self.mage1.image_id = '3'
+        self.mage1.image_id = 'mage1'
         self.action_state = 'walk'
         self.mage2 = mg.Mage(field_height - 1, field_width - 1, self.id_giver.new_id())
-        self.mage2.image_id = '4'
+        self.mage2.image_id = 'mage2'
         self.game_status = 'none'
 
     def initialise_game(self):
@@ -178,8 +178,8 @@ class GameApp:
                     # con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
-                    message = 'animate ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(
-                        self.mage1.y) + ' ' + str(500)
+                    message = 'animate ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(
+                        self.mage2.y) + ' ' + str(500)
                     con.write_message('server', message)
         if self.action_state[:2] == 'sp':
             spell_number = int((self.action_state.split())[1])

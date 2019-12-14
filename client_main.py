@@ -8,6 +8,7 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 import subprocess
+import Spell_book as sb
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 ANIM_DT = 10
@@ -26,22 +27,6 @@ window_height = height * cell_size
 """Высота окна"""
 interface_height = 100
 import time
-
-class Object:
-    """
-    Класс объекта на экране
-    Хранит координаты в пикселях, id объекта как объекта на сервере, id картинки, id на canvas
-    """
-    def __init__(self):
-        self.x = 0
-        self.y = 0
-        self.client_id = None
-        self.img_id = None
-        self.canvas_id = None
-
-    def set_coords(self, x, y):
-        self.x = x
-        self.y = y
 
 
 def pass_event(event):
@@ -81,6 +66,23 @@ def key_processing(event):
     send_message(message_to_server)
 
 
+class Object:
+    """
+    Класс объекта на экране
+    Хранит координаты в пикселях, id объекта как объекта на сервере, id картинки, id на canvas
+    """
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.client_id = None
+        self.img_id = None
+        self.canvas_id = None
+
+    def set_coords(self, x, y):
+        self.x = x
+        self.y = y
+
+
 class ClientGameApp:
     """Основной класс прлиожения"""
     def __init__(self):
@@ -98,6 +100,9 @@ class ClientGameApp:
         self.player1_turn_id = None
         self.player2_turn_id = None
         self.range_circle_id = None
+        self.action_ids = []
+        self.ation_number_ids = []
+        self.action_bar_id = None
 
     def draw_object(self, obj, canv):
         """
@@ -141,6 +146,23 @@ class ClientGameApp:
         #     self.objects[obj_id].set_coords(screen_x2, screen_y2)
         #     self.draw_object(self.objects[obj_id], 'field')
 
+    def draw_action_bar(self):
+        x0 = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8)
+        self.action_bar_id = self.interface.create_rectangle(x0, 55 + 32, x0 + 2 * len(sb.spell_book) / 2 * (32 + 8), 55, outline='red')
+        print(x0)
+        spell_img = Object()
+        spell_img.img_id = 5
+        spell_img.x = x0
+        spell_img.y = 55
+        spell_number = Object
+        spell_img.img_id = 5
+        spell_img.x = x0
+        spell_img.y = 55
+        canv_id = self.draw_object(spell_img, 'interface')
+        self.action_ids.append(canv_id)
+        for i in range(1, len(sb.spell_book)):
+            pass
+
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
         screen_y = (y + 1) * cell_size - 17
@@ -153,7 +175,6 @@ class ClientGameApp:
         self.field.delete(self.range_circle_id)
 
     def draw_bars(self):
-
         self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
         self.health_bar2_id = self.interface.create_line(window_width - 200, 15, window_width, 15, width=15, fill='red')
         self.energy_bar1_id = self.interface.create_line(0, 35, 200, 35, width=15, fill='grey')
@@ -164,12 +185,12 @@ class ClientGameApp:
         self.player1_turn_id = self.interface.create_rectangle(5, 55, 45, 95, fill='red')
         self.player2_turn_id = self.interface.create_rectangle(window_width - 5, 55, window_width - 45, 95, fill='red')
         mage1 = Object()
-        mage1.img_id = 3
+        mage1.img_id = 'mage1'
         mage1.x = 55
         mage1.y = 55
         self.draw_object(mage1, 'interface')
         mage2 = Object()
-        mage2.img_id = 4
+        mage2.img_id = 'mage2'
         mage2.x = window_width - 55 - 32
         mage2.y = 55
         self.draw_object(mage2, 'interface')
@@ -213,7 +234,7 @@ class ClientGameApp:
             a.client_id = int(list_of_words[1])
             a.x = int(list_of_words[2]) * cell_size
             a.y = int(list_of_words[3]) * cell_size
-            a.img_id = int(list_of_words[4])
+            a.img_id = list_of_words[4]
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
             a.canvas_id = self.draw_object(a, 'field')
@@ -272,6 +293,7 @@ app.bind_all()
 app.draw_grid()
 app.draw_bars()
 app.draw_turn()
+#app.draw_action_bar()
 # a = Object()
 # a.img_id = 1
 # a.x = 1 * cell_size

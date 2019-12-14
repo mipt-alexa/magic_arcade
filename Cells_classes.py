@@ -14,7 +14,7 @@ class Cell:
         self.y = y
         self.type = 'Cell'
         self.client_id = client_id
-        self.image_id = '1'
+        self.image_id = 'floor'
         pass
 
 
@@ -26,7 +26,7 @@ class Obstacle:
     def __init__(self, x, y, client_id, health=OBSTACLE_BASIC_HEALTH):
         self.client_id = client_id
         self.type = 'Obstacle'
-        self.image_id = '2'
+        self.image_id = 'wall'
         self.x = x
         self.y = y
         self.health = health
