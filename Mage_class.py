@@ -44,11 +44,14 @@ class Mage:
             self.energy -= STEP_ENERGY
 
     def check_move(self, click_x, click_y, obstacles, another_mage):
+        print(5) #exp
         if (abs(click_x - self.x) == 1 and abs(click_y - self.y) == 0) or (
                 abs(click_x - self.x) == 0 and abs(click_y - self.y) == 1):
+            print(6) #exp
             if obstacles[click_y][click_x] is None and not (click_x == another_mage.x and click_y == another_mage.y):
                 return True
             else:
+                print(7) #exp
                 return False
         else:
             return False

@@ -14,7 +14,7 @@ CONN = con.start_connection_client()
 """константа связи, работает во всех случаях передачи и чтения сообщений"""
 import subprocess
 ANIM_DT = 10
-DT = 30
+DT = 50
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -52,27 +52,18 @@ def pass_event(event):
 
 
 def read_message():
+    """
+    считывает сообщение с сервера
+    """
     message = con.read_message(CONN)
     return message
 
 
 def send_message(message):
-    con.write_message_client(CONN, message)
-    """
-    считывает сообщение с сервера
-    :return:
-    """
-    list_of_messages = con.read_message('client')
-    return list_of_messages
-
-
-def send_message(message):
     """
     отправляет данные на сервер
-    :param message:
-    :return:
     """
-    con.write_message('client', message)
+    con.write_message_client(CONN, message)
 
 
 def click_processing(event):
