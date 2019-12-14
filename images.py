@@ -31,7 +31,20 @@ def load_all_images(canv):
     images['floor'] = (ImageTk.PhotoImage(Image.open(path), canv))
     path = "images_library/" + 'walk' + ".png"
     images['walk'] = (ImageTk.PhotoImage(Image.open(path), canv))
-
+    path = "images_library/" + 'ice spike' + ".png"
+    images['ice spike'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + '0' + ".png"
+    images['0'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + '1' + ".png"
+    images['1'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + '2' + ".png"
+    images['2'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + '3' + ".png"
+    images['3'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + 'fireball' + ".png"
+    images['fireball'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + 'wall spell' + ".png"
+    images['wall spell'] = (ImageTk.PhotoImage(Image.open(path), canv))
 
 def get_image(k):
     """возвращает объект картинку"""

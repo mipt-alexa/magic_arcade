@@ -101,7 +101,7 @@ class ClientGameApp:
         self.player2_turn_id = None
         self.range_circle_id = None
         self.action_ids = []
-        self.ation_number_ids = []
+        self.action_number_ids = []
         self.action_bar_id = None
 
     def draw_object(self, obj, canv):
@@ -151,17 +151,32 @@ class ClientGameApp:
         self.action_bar_id = self.interface.create_rectangle(x0, 55 + 32, x0 + 2 * len(sb.spell_book) / 2 * (32 + 8), 55, outline='red')
         print(x0)
         spell_img = Object()
-        spell_img.img_id = 5
+        spell_img.img_id = 'walk'
         spell_img.x = x0
         spell_img.y = 55
-        spell_number = Object
-        spell_img.img_id = 5
-        spell_img.x = x0
-        spell_img.y = 55
+        spell_number = Object()
+        spell_number.img_id = '0'
+        spell_number.x = x0 + 26
+        spell_number.y = 55 + 18
         canv_id = self.draw_object(spell_img, 'interface')
         self.action_ids.append(canv_id)
+        canv_id = self.draw_object(spell_number, 'interface')
+        self.action_number_ids.append(canv_id)
         for i in range(1, len(sb.spell_book)):
-            pass
+            x0  += (32 + 8)
+            spell_img = Object()
+            spell_img.img_id = sb.spell_book[i].menu_image_id
+            spell_img.x = x0
+            spell_img.y = 55
+            spell_number = Object()
+            spell_number.img_id = str(i)
+            spell_number.x = x0 + 26
+            spell_number.y = 55 + 18
+            canv_id = self.draw_object(spell_img, 'interface')
+            self.action_ids.append(canv_id)
+            canv_id = self.draw_object(spell_number, 'interface')
+            self.action_number_ids.append(canv_id)
+
 
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
@@ -293,7 +308,7 @@ app.bind_all()
 app.draw_grid()
 app.draw_bars()
 app.draw_turn()
-#app.draw_action_bar()
+app.draw_action_bar()
 # a = Object()
 # a.img_id = 1
 # a.x = 1 * cell_size
