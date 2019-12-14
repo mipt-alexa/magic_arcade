@@ -110,34 +110,34 @@ class ClientGameApp:
             canvas_id = self.interface.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
 
-    # def animate_object(self, obj, x2, y2, animation_time):
-    #     """
-    #     Передвигает уже нарисованные объект
-    #     :param obj: объект
-    #     :param x2: x клетки назначения
-    #     :param y2: y клетки назначения
-    #     :param animation_time: время анимации в ms
-    #     :return:
-    #     """
-    #     screen_x1 = obj.x
-    #     screen_y1 = obj.y
-    #     screen_x2 = x2 * cell_size
-    #     screen_y2 = y2 * cell_size
-    #     self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
+    def animate_object(self, obj_id, x2, y2, animation_time):
+        """
+        Передвигает уже нарисованные объект
+        :param obj_id: id объекта в массиве objects
+        :param x2: x клетки назначения
+        :param y2: y клетки назначения
+        :param animation_time: время анимации в ms
+        :return:
+        """
+        screen_x1 = self.objects[obj_id].x
+        screen_y1 = self.objects[obj_id].y
+        screen_x2 = x2 * cell_size
+        screen_y2 = y2 * cell_size
+        self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
 
-    # def move(self, obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
-    #     cr_time += ANIM_DT
-    #     x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
-    #     y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
-    #     obj.set_coords(x, y)
-    #     self.field.delete(obj.canvas_id)
-    #     obj.canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
-    #     if cr_time <= animation_time:
-    #         self.root.after(ANIM_DT, lambda: self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
-    #     else:
-    #         self.field.delete(obj.canvas_id)
-    #         obj.set_coords(screen_x2, screen_y2)
-    #         self.draw_object(obj, 'field')
+    def move(self, obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
+        cr_time += ANIM_DT
+        x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
+        y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
+        self.objects[obj_id].set_coords(x, y)
+        self.field.delete(self.objects[obj_id].canvas_id)
+        self.objects[obj_id].canvas_id = self.field.create_image(self.objects[obj_id].x, self.objects[obj_id].y, anchor=
+        NW, image=img.get_image(self.objects[obj_id].img_id))
+        if cr_time <= animation_time:
+            self.root.after(ANIM_DT, lambda: self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
+        else:
+            self.objects[obj_id].set_coords(screen_x2, screen_y2)
+            self.draw_object(self.objects[obj_id], 'field')
 
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
@@ -220,7 +220,7 @@ class ClientGameApp:
             self.field.delete(self.objects[int(list_of_words[1])].canvas_id)
             del self.objects[int(list_of_words[1])]
         if list_of_words[0] == 'animate':
-            self.animate_object(self.objects[int(list_of_words[1])], int(list_of_words[2]), int(list_of_words[3]), int(list_of_words[4]))
+            self.animate_object(int(list_of_words[1]), int(list_of_words[2]), int(list_of_words[3]), int(list_of_words[4]))
         if list_of_words[0] == 'set_energy':
             self.set_energy(list_of_words[1], int(list_of_words[2]))
         if list_of_words[0] == 'set_health':
@@ -233,7 +233,6 @@ class ClientGameApp:
             self.del_range_circle()
         if list_of_words[0] == 'end_game':
             self.end_game(list_of_words[1])
-
 
     def draw_grid(self):
         """Рисует сетку и камушки"""
@@ -271,18 +270,16 @@ app.bind_all()
 app.draw_grid()
 app.draw_bars()
 app.draw_turn()
-#app.draw_range_circle(5, 5, 1)
 # a = Object()
 # a.img_id = 1
-# a.x = 4 * cell_size
-# a.y = 5 * cell_size
+# a.x = 1 * cell_size
+# a.y = 1 * cell_size
 # a.canvas_id = app.draw_object(a, 'field')
-# app.animate_object(a, 2, 1, 1000)
-# time.sleep(1)
-# app.animate_object(a, 3, 10, 1000)
+# a.client_id = 1
+# app.objects[a.client_id] = a
+# app.animate_object(a.client_id, 4, 4, 1000)
+# app.animate_object(a.client_id, 2, 2, 1000)
 #app.field.delete(a.canvas_id)
-# img2 = img.get_image(4) #test
-# pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-app.start_game()
+#app.start_game()
 app.update()
 app.root.mainloop()

@@ -57,6 +57,7 @@ class GameApp:
         message = 'set_turn ' + 'player1'
         con.write_message('server', message)
 
+
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
