@@ -57,7 +57,6 @@ class GameApp:
         message = 'set_turn ' + 'player1'
         con.write_message('server', message)
 
-
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
@@ -133,7 +132,8 @@ class GameApp:
     def defend(self, turn, spell, click_x, click_y):
         print("defend")
         if turn == 'player1':
-            if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x], self.mage2):
+            if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
+                                      self.mage2):
                 self.mage1.cast_spell(spell)
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message('server', message)
@@ -143,7 +143,8 @@ class GameApp:
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
                 con.write_message('server', message)
         elif turn == 'player2':
-            if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x], self.mage2):
+            if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
+                                      self.mage2):
                 self.mage2.cast_spell(spell)
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message('server', message)
@@ -161,18 +162,24 @@ class GameApp:
             if turn == 'player1':
                 if self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
-                    message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) \
-                              + ' ' + self.mage1.image_id
-                    con.write_message('server', message)
+                    # message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) \
+                    #         + ' ' + self.mage1.image_id
+                    # con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
+                    con.write_message('server', message)
+                    message = 'animate ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(
+                        self.mage1.y) + ' ' + str(500)
                     con.write_message('server', message)
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
-                    message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) \
-                              + ' ' + self.mage2.image_id
-                    con.write_message('server', message)
+                    # message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) \
+                    #         + ' ' + self.mage2.image_id
+                    # con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                    con.write_message('server', message)
+                    message = 'animate ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(
+                        self.mage1.y) + ' ' + str(500)
                     con.write_message('server', message)
         if self.action_state[:2] == 'sp':
             spell_number = int((self.action_state.split())[1])

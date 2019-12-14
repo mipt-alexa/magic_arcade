@@ -119,6 +119,7 @@ class ClientGameApp:
         :param animation_time: время анимации в ms
         :return:
         """
+        self.unbind_all()
         screen_x1 = self.objects[obj_id].x
         screen_y1 = self.objects[obj_id].y
         screen_x2 = x2 * cell_size
@@ -136,8 +137,9 @@ class ClientGameApp:
         if cr_time <= animation_time:
             self.root.after(ANIM_DT, lambda: self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
         else:
-            self.objects[obj_id].set_coords(screen_x2, screen_y2)
-            self.draw_object(self.objects[obj_id], 'field')
+            self.bind_all()
+        #     self.objects[obj_id].set_coords(screen_x2, screen_y2)
+        #     self.draw_object(self.objects[obj_id], 'field')
 
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
