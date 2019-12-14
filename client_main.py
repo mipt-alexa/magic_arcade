@@ -283,6 +283,6 @@ app.draw_turn()
 #app.field.delete(a.canvas_id)
 # img2 = img.get_image(4) #test
 # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-#app.start_game()
+app.start_game()
 app.update()
 app.root.mainloop()
