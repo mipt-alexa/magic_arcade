@@ -60,3 +60,16 @@ def write_message_server(conn_1, conn_2, message):
     message_encode = message.encode("utf-8")
     conn_1.send(message_encode)
     conn_2.send(message_encode)
+    
+"""
+Заготовка для сообщения о определении клиентом правый он оли левый
+
+def write_side_of_client(conn, x):
+    message = x  # 2 - правый, 1 - левый, можешь вписать что захочешь
+    message += " "
+    for i in range(100 - len(message)):
+        message += "/"
+    print("write " + message)  #exp
+    message_encode = message.encode("utf-8")
+    conn.send(message_encode)
+"""

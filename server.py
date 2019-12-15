@@ -48,8 +48,6 @@ class GameApp:
                     message = 'obj ' + str(self.battle_field.field[i][j].client_id) + ' ' + str(j) + ' ' + str(i) + ' ' \
                               + self.battle_field.field[i][j].image_id
                     con.write_message_server(self.conn_1, self.conn_2, message)
-                    time.sleep(0.005)
-                    con.write_message_server(self.conn_1, self.conn_2, message)
         message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + \
                   self.mage1.image_id
         con.write_message_server(self.conn_1, self.conn_2, message)
@@ -62,7 +60,13 @@ class GameApp:
         else:
             message = 'set_turn ' + 'player1'
         con.write_message_server(self.conn_1, self.conn_2, message)
+        """
+        Заготовка для сообщения об определении стороны клиенту
+        con.write_side_of_client(conn_1, 1)
+        con.write_side_of_client(conn_2, 2)
+        """
 
+        
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
@@ -160,15 +164,11 @@ class GameApp:
                 con.write_message_server(self.conn_1, self.conn_2, message)
 
     def process_click_message(self, turn, splitted_message): 
-        print(2)  #exp
         click_x = int(splitted_message[1])
         click_y = int(splitted_message[2])
         if self.action_state == 'walk':
             if turn == 'player1':
-                print(3)  #exp
-                print(self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2))  #exp
                 if self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2):
-                    print(4)  #exp
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
                     message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) \
                               + ' ' + self.mage1.image_id
@@ -176,10 +176,7 @@ class GameApp:
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
             if turn == 'player2':
-                print(3)  #exp
-                print(self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1))  #exp
                 if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
-                    print(4)  #exp
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
                     message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) \
                               + ' ' + self.mage2.image_id
@@ -243,7 +240,6 @@ class GameApp:
             if message_client_1 == '':
                 pass
             elif splitted_message__client_1[0] == 'click':
-                print(1)  #exp
                 self.process_click_message('player1', splitted_message__client_1)
             elif splitted_message__client_1[0] == 'key':
                 self.process_key_message('player1', splitted_message__client_1)
@@ -252,7 +248,6 @@ class GameApp:
             if message_client_2 == '':
                 pass
             elif splitted_message__client_2[0] == 'click':
-                print(1)  #exp
                 self.process_click_message('player2', splitted_message__client_2)
             elif splitted_message__client_2[0] == 'key':
                 self.process_key_message('player2', splitted_message__client_2)
