@@ -7,6 +7,7 @@ from BattleField_class import Obstacle
 BASIC_HEALTH = 100
 BASIC_ENERGY = 100
 STEP_ENERGY = 20
+
 """
 Класс маг, класс персонажа, которым управляет игрок
 """
@@ -66,7 +67,7 @@ class Mage:
                 return False
 
         elif spell.spell_type == 'defend_directed':
-            if (obj.x == mage_2.x and obj.y == mage_2.y) or obstacles[obj.y][obj.x] is not None:
+            if (obj.x == mage_2.x and obj.y == mage_2.y) or obstacles[obj.y][obj.x] is not None or self.energy < spell.energy:
                 return False
             else:
                 if (obj.x - self.x) ** 2 + (obj.y - self.y) ** 2 <= spell.spell_range ** 2:

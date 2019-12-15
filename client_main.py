@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import tkinter
 import math
 import time
@@ -9,8 +11,6 @@ from PIL import Image, ImageTk
 import images as img
 import subprocess
 import Spell_book as sb
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 ANIM_DT = 10
 DT = 30
 """тик времени"""
@@ -120,10 +120,6 @@ class ClientGameApp:
         """
         Передвигает уже нарисованные объект
         :param obj_id: id объекта в массиве objects
-        :param x2: x клетки назначения
-        :param y2: y клетки назначения
-        :param animation_time: время анимации в ms
-        :return:
         """
         self.unbind_all()
         screen_x1 = self.objects[obj_id].x
@@ -309,7 +305,7 @@ class ClientGameApp:
 
     def start_game(self):
         cmd = 'python server.py'
-        subprocess.Popen(cmd, shell = True)
+        subprocess.Popen(cmd, shell=True)
 
 
 app = ClientGameApp()

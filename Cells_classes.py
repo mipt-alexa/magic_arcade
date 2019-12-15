@@ -3,6 +3,8 @@
 OBSTACLE_BASIC_HEALTH = 20
 
 
+OBSTACLE_BASIC_HEALTH = 20
+
 class Cell:
     """
     класс клетка, пока не несет в себе какой-либо информации, что вероятно изменится в дальнейем.
