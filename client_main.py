@@ -10,9 +10,6 @@ import images as img
 
 
 
-CONN = con.start_connection_client()
-"""константа связи, работает во всех случаях передачи и чтения сообщений"""
-import subprocess
 ANIM_DT = 10
 DT = 50
 """тик времени"""
@@ -30,6 +27,7 @@ window_height = height * cell_size
 interface_height = 100
 
 
+        
 class Object:
     """
     Класс объекта на экране
@@ -259,30 +257,31 @@ class ClientGameApp:
                 self.process_message(message)
         self.root.after(DT, self.update)
 
-    def start_game(self):
-        cmd = 'python server.py'
-        subprocess.Popen(cmd, shell = True)
 
+def main():
+    app = ClientGameApp()
+    img.load_all_images(app)
 
-app = ClientGameApp()
-img.load_all_images(app)
+    app.bind_all()
+    app.draw_grid()
+    app.draw_bars()
+    app.draw_turn()
+    #app.draw_range_circle(5, 5, 1)
+    # a = Object()
+    # a.img_id = 1
+    # a.x = 4 * cell_size
+    # a.y = 5 * cell_size
+    # a.canvas_id = app.draw_object(a, 'field')
+    # app.animate_object(a, 2, 1, 1000)
+    # time.sleep(1)
+    # app.animate_object(a, 3, 10, 1000)
+    #app.field.delete(a.canvas_id)
+    # img2 = img.get_image(4) #test
+    # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
+    #app.start_game()
+    app.update()
+    app.root.mainloop()
 
-app.bind_all()
-app.draw_grid()
-app.draw_bars()
-app.draw_turn()
-#app.draw_range_circle(5, 5, 1)
-# a = Object()
-# a.img_id = 1
-# a.x = 4 * cell_size
-# a.y = 5 * cell_size
-# a.canvas_id = app.draw_object(a, 'field')
-# app.animate_object(a, 2, 1, 1000)
-# time.sleep(1)
-# app.animate_object(a, 3, 10, 1000)
-#app.field.delete(a.canvas_id)
-# img2 = img.get_image(4) #test
-# pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-#app.start_game()
-app.update()
-app.root.mainloop()
+"""константа связи, работает во всех случаях передачи и чтения сообщений"""
+CONN = con.start_connection_client()
+main()

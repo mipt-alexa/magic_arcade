@@ -15,8 +15,8 @@ def start_connection_server():
     
     
 def start_connection_client():
-    print("Напишите host сервера")
-    host = input()
+    file_host = open("host.txt", 'r', encoding = 'utf-8')
+    host = file_host.readline()
     conn = socket.socket()
     conn.connect((host, 14900))
     conn.setblocking(True)
