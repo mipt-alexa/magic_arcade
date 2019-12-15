@@ -195,6 +195,8 @@ class GameApp:
                 self.action_state = 'walk'
                 message = 'del_range_circle'
                 con.write_message('server', message)
+                message = 'set_action ' + '0'
+                con.write_message('server', message)
             elif splitted_message[1] == 't':
                 message = 'del_range_circle'
                 con.write_message('server', message)
@@ -219,6 +221,8 @@ class GameApp:
                 self.action_state = 'spell ' + str(splitted_message[1])
                 spell_number = int((self.action_state.split())[1])
                 spell = spell_book[spell_number]
+                message = 'set_action ' + str(spell_number)
+                con.write_message('server', message)
                 if spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
                     if turn == 'player1':
                         message = 'draw_range_circle ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + str(

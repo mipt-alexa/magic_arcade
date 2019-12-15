@@ -103,6 +103,7 @@ class ClientGameApp:
         self.action_ids = []
         self.action_number_ids = []
         self.action_bar_id = None
+        self.action_cursor_id = None
 
     def draw_object(self, obj, canv):
         """
@@ -162,8 +163,9 @@ class ClientGameApp:
         self.action_ids.append(canv_id)
         canv_id = self.draw_object(spell_number, 'interface')
         self.action_number_ids.append(canv_id)
+        self.action_cursor_id = self.interface.create_image(x0, 55, anchor=NW, image=img.get_image('cursor'))
         for i in range(1, len(sb.spell_book)):
-            x0  += (32 + 8)
+            x0 += (32 + 8)
             spell_img = Object()
             spell_img.img_id = sb.spell_book[i].menu_image_id
             spell_img.x = x0
@@ -177,6 +179,10 @@ class ClientGameApp:
             canv_id = self.draw_object(spell_number, 'interface')
             self.action_number_ids.append(canv_id)
 
+    def set_action(self, action_number):
+        x = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8) + action_number * (32 + 8)
+        self.interface.delete(self.action_cursor_id)
+        self.action_cursor_id = self.interface.create_image(x, 55, anchor=NW, image=img.get_image('cursor'))
 
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
@@ -241,6 +247,9 @@ class ClientGameApp:
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
 
+    # def del_object(self, canvas_id):
+    #     self.field.delete(canvas_id)
+
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
         list_of_words = message.split()
@@ -271,6 +280,8 @@ class ClientGameApp:
             self.del_range_circle()
         if list_of_words[0] == 'end_game':
             self.end_game(list_of_words[1])
+        if list_of_words[0] == 'set_action':
+            self.set_action(int(list_of_words[1]))
 
     def draw_grid(self):
         """Рисует сетку и камушки"""

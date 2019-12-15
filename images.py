@@ -45,6 +45,8 @@ def load_all_images(canv):
     images['fireball'] = (ImageTk.PhotoImage(Image.open(path), canv))
     path = "images_library/" + 'wall spell' + ".png"
     images['wall spell'] = (ImageTk.PhotoImage(Image.open(path), canv))
+    path = "images_library/" + 'cursor' + ".png"
+    images['cursor'] = (ImageTk.PhotoImage(Image.open(path), canv))
 
 def get_image(k):
     """возвращает объект картинку"""
