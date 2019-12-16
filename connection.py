@@ -68,7 +68,7 @@ def write_message_server(conn_1, conn_2, message):
 Заготовка для сообщения о определении клиентом правый он оли левый
 
 def write_side_of_client(conn, x):
-    message = x  # 2 - правый, 1 - левый, можешь вписать что захочешь
+    message = str(x)  # 2 - правый, 1 - левый, можешь вписать что захочешь
     message += " "
     for i in range(100 - len(message)):
         message += "/"
