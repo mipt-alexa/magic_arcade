@@ -7,7 +7,6 @@ from Spell_book import spell_book
 from random import choice
 
 
-
 root = tk.Tk()
 DT = 50
 

@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-# -*- coding: utf-8 -*-
 import tkinter
 import math
 import time
@@ -10,6 +8,8 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 import Spell_book as sb
+
+
 
 ANIM_DT = 10
 DT = 50
@@ -63,7 +63,6 @@ def send_message(message):
     отправляет данные на сервер
     """
     con.write_message_client(CONN, message)
-
 
 
 def click_processing(event):
@@ -296,6 +295,7 @@ class ClientGameApp:
             self.set_action(int(list_of_words[1]))
 
 
+            
     def draw_grid(self):
         """Рисует сетку и камушки"""
         for i in range(0, window_width // cell_size + 1, 1):
