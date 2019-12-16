@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import tkinter
 import math
 import time
@@ -7,8 +9,7 @@ import connection as con
 from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
-
-
+import Spell_book as sb
 
 ANIM_DT = 10
 DT = 50
@@ -27,7 +28,7 @@ window_height = height * cell_size
 interface_height = 100
 
 
-        
+
 class Object:
     """
     Класс объекта на экране
@@ -40,9 +41,9 @@ class Object:
         self.img_id = None
         self.canvas_id = None
 
-    def set_coords(self, x, y):
-        self.x = x
-        self.y = y
+
+def pass_event(event):
+    pass
 
 
 def pass_event(event):
@@ -64,6 +65,7 @@ def send_message(message):
     con.write_message_client(CONN, message)
 
 
+
 def click_processing(event):
     """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
     event_x = event.x // 34
@@ -77,6 +79,23 @@ def key_processing(event):
     key = event.char
     message_to_server = 'key ' + key
     send_message(message_to_server)
+
+
+class Object:
+    """
+    Класс объекта на экране
+    Хранит координаты в пикселях, id объекта как объекта на сервере, id картинки, id на canvas
+    """
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.client_id = None
+        self.img_id = None
+        self.canvas_id = None
+
+    def set_coords(self, x, y):
+        self.x = x
+        self.y = y
 
 
 class ClientGameApp:
@@ -96,6 +115,10 @@ class ClientGameApp:
         self.player1_turn_id = None
         self.player2_turn_id = None
         self.range_circle_id = None
+        self.action_ids = []
+        self.action_number_ids = []
+        self.action_bar_id = None
+        self.action_cursor_id = None
 
     def draw_object(self, obj, canv):
         """
@@ -108,34 +131,69 @@ class ClientGameApp:
             canvas_id = self.interface.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
         return canvas_id
 
-    # def animate_object(self, obj, x2, y2, animation_time):
-    #     """
-    #     Передвигает уже нарисованные объект
-    #     :param obj: объект
-    #     :param x2: x клетки назначения
-    #     :param y2: y клетки назначения
-    #     :param animation_time: время анимации в ms
-    #     :return:
-    #     """
-    #     screen_x1 = obj.x
-    #     screen_y1 = obj.y
-    #     screen_x2 = x2 * cell_size
-    #     screen_y2 = y2 * cell_size
-    #     self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
+    def animate_object(self, obj_id, x2, y2, animation_time):
+        """
+        Передвигает уже нарисованные объект
+        :param obj_id: id объекта в массиве objects
+        """
+        self.unbind_all()
+        screen_x1 = self.objects[obj_id].x
+        screen_y1 = self.objects[obj_id].y
+        screen_x2 = x2 * cell_size
+        screen_y2 = y2 * cell_size
+        self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
 
-    # def move(self, obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
-    #     cr_time += ANIM_DT
-    #     x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
-    #     y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
-    #     obj.set_coords(x, y)
-    #     self.field.delete(obj.canvas_id)
-    #     obj.canvas_id = self.field.create_image(obj.x, obj.y, anchor=NW, image=img.get_image(obj.img_id))
-    #     if cr_time <= animation_time:
-    #         self.root.after(ANIM_DT, lambda: self.move(obj, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
-    #     else:
-    #         self.field.delete(obj.canvas_id)
-    #         obj.set_coords(screen_x2, screen_y2)
-    #         self.draw_object(obj, 'field')
+    def move(self, obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
+        cr_time += ANIM_DT
+        x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
+        y = screen_y1 + (screen_y2 - screen_y1) * cr_time / animation_time
+        self.objects[obj_id].set_coords(x, y)
+        self.field.delete(self.objects[obj_id].canvas_id)
+        self.objects[obj_id].canvas_id = self.field.create_image(self.objects[obj_id].x, self.objects[obj_id].y, anchor=
+        NW, image=img.get_image(self.objects[obj_id].img_id))
+        if cr_time <= animation_time:
+            self.root.after(ANIM_DT, lambda: self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
+        else:
+            self.bind_all()
+        #     self.objects[obj_id].set_coords(screen_x2, screen_y2)
+        #     self.draw_object(self.objects[obj_id], 'field')
+
+    def draw_action_bar(self):
+        x0 = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8)
+        self.action_bar_id = self.interface.create_rectangle(x0, 55 + 32, x0 + 2 * len(sb.spell_book) / 2 * (32 + 8), 55, outline='red')
+        print(x0)
+        spell_img = Object()
+        spell_img.img_id = 'walk'
+        spell_img.x = x0
+        spell_img.y = 55
+        spell_number = Object()
+        spell_number.img_id = '0'
+        spell_number.x = x0 + 26
+        spell_number.y = 55 + 18
+        canv_id = self.draw_object(spell_img, 'interface')
+        self.action_ids.append(canv_id)
+        canv_id = self.draw_object(spell_number, 'interface')
+        self.action_number_ids.append(canv_id)
+        self.action_cursor_id = self.interface.create_image(x0, 55, anchor=NW, image=img.get_image('cursor'))
+        for i in range(1, len(sb.spell_book)):
+            x0 += (32 + 8)
+            spell_img = Object()
+            spell_img.img_id = sb.spell_book[i].menu_image_id
+            spell_img.x = x0
+            spell_img.y = 55
+            spell_number = Object()
+            spell_number.img_id = str(i)
+            spell_number.x = x0 + 26
+            spell_number.y = 55 + 18
+            canv_id = self.draw_object(spell_img, 'interface')
+            self.action_ids.append(canv_id)
+            canv_id = self.draw_object(spell_number, 'interface')
+            self.action_number_ids.append(canv_id)
+
+    def set_action(self, action_number):
+        x = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8) + action_number * (32 + 8)
+        self.interface.delete(self.action_cursor_id)
+        self.action_cursor_id = self.interface.create_image(x, 55, anchor=NW, image=img.get_image('cursor'))
 
     def draw_range_circle(self, x, y, spell_range):
         screen_x = (x + 1) * cell_size - 17
@@ -160,12 +218,12 @@ class ClientGameApp:
         self.player1_turn_id = self.interface.create_rectangle(5, 55, 45, 95, fill='red')
         self.player2_turn_id = self.interface.create_rectangle(window_width - 5, 55, window_width - 45, 95, fill='red')
         mage1 = Object()
-        mage1.img_id = 3
+        mage1.img_id = 'mage1'
         mage1.x = 55
         mage1.y = 55
         self.draw_object(mage1, 'interface')
         mage2 = Object()
-        mage2.img_id = 4
+        mage2.img_id = 'mage2'
         mage2.x = window_width - 55 - 32
         mage2.y = 55
         self.draw_object(mage2, 'interface')
@@ -200,6 +258,9 @@ class ClientGameApp:
         label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
+    # def del_object(self, canvas_id):
+    #     self.field.delete(canvas_id)
+
 
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
@@ -209,7 +270,7 @@ class ClientGameApp:
             a.client_id = int(list_of_words[1])
             a.x = int(list_of_words[2]) * cell_size
             a.y = int(list_of_words[3]) * cell_size
-            a.img_id = int(list_of_words[4])
+            a.img_id = list_of_words[4]
             if self.objects.get(a.client_id) is not None:
                 self.field.delete(self.objects[a.client_id].canvas_id)
             a.canvas_id = self.draw_object(a, 'field')
@@ -218,7 +279,7 @@ class ClientGameApp:
             self.field.delete(self.objects[int(list_of_words[1])].canvas_id)
             del self.objects[int(list_of_words[1])]
         if list_of_words[0] == 'animate':
-            self.animate_object(self.objects[int(list_of_words[1])], int(list_of_words[2]), int(list_of_words[3]), int(list_of_words[4]))
+            self.animate_object(int(list_of_words[1]), int(list_of_words[2]), int(list_of_words[3]), int(list_of_words[4]))
         if list_of_words[0] == 'set_energy':
             self.set_energy(list_of_words[1], int(list_of_words[2]))
         if list_of_words[0] == 'set_health':
@@ -231,6 +292,8 @@ class ClientGameApp:
             self.del_range_circle()
         if list_of_words[0] == 'end_game':
             self.end_game(list_of_words[1])
+        if list_of_words[0] == 'set_action':
+            self.set_action(int(list_of_words[1]))
 
 
     def draw_grid(self):
@@ -256,6 +319,10 @@ class ClientGameApp:
             else:
                 self.process_message(message)
         self.root.after(DT, self.update)
+
+    def start_game(self):
+        cmd = 'python server.py'
+        subprocess.Popen(cmd, shell=True)
 
 
 def main():

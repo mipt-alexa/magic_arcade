@@ -7,6 +7,7 @@ from Spell_book import spell_book
 from random import choice
 
 
+
 root = tk.Tk()
 DT = 50
 
@@ -32,10 +33,10 @@ class GameApp:
         self.field_height = field_height
         self.battle_field = bf.BattleField(field_width, field_height, self.id_giver)
         self.mage1 = mg.Mage(0, 0, self.id_giver.new_id())
-        self.mage1.image_id = '3'
+        self.mage1.image_id = 'mage1'
         self.action_state = 'walk'
         self.mage2 = mg.Mage(field_height - 1, field_width - 1, self.id_giver.new_id())
-        self.mage2.image_id = '4'
+        self.mage2.image_id = 'mage2'
         self.game_status = 'none'
 
     def initialise_game(self):
@@ -142,7 +143,8 @@ class GameApp:
     def defend(self, turn, spell, click_x, click_y):
         print("defend")
         if turn == 'player1':
-            if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x], self.mage2):
+            if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
+                                      self.mage2):
                 self.mage1.cast_spell(spell)
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message_server(self.conn_1, self.conn_2, message)
@@ -152,7 +154,8 @@ class GameApp:
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
                 con.write_message_server(self.conn_1, self.conn_2, message)
         elif turn == 'player2':
-            if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x], self.mage2):
+            if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
+                                      self.mage2):
                 self.mage2.cast_spell(spell)
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message_server(self.conn_1, self.conn_2, message)
@@ -175,6 +178,9 @@ class GameApp:
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
+                    message = 'animate ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(
+                        self.mage1.y) + ' ' + str(500)
+                    con.write_message_server(self.conn_1, self.conn_2, message)
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
@@ -182,6 +188,9 @@ class GameApp:
                               + ' ' + self.mage2.image_id
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
+                    con.write_message_server(self.conn_1, self.conn_2, message)
+                    message = 'animate ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(
+                        self.mage2.y) + ' ' + str(500)
                     con.write_message_server(self.conn_1, self.conn_2, message)
         if self.action_state[:2] == 'sp':
             spell_number = int((self.action_state.split())[1])
@@ -196,6 +205,8 @@ class GameApp:
             if splitted_message[1] == '0':
                 self.action_state = 'walk'
                 message = 'del_range_circle'
+                con.write_message_server(self.conn_1, self.conn_2, message)
+                message = 'set_action ' + '0'
                 con.write_message_server(self.conn_1, self.conn_2, message)
             elif splitted_message[1] == 't':
                 message = 'del_range_circle'
@@ -221,6 +232,8 @@ class GameApp:
                 self.action_state = 'spell ' + str(splitted_message[1])
                 spell_number = int((self.action_state.split())[1])
                 spell = spell_book[spell_number]
+                message = 'set_action ' + str(spell_number)
+                con.write_message('server', message)
                 if spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
                     if turn == 'player1':
                         message = 'draw_range_circle ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + str(
@@ -243,7 +256,6 @@ class GameApp:
                 self.process_click_message('player1', splitted_message__client_1)
             elif splitted_message__client_1[0] == 'key':
                 self.process_key_message('player1', splitted_message__client_1)
-
         elif self.game_status == 'player2_turn':
             if message_client_2 == '':
                 pass
