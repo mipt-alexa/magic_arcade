@@ -313,7 +313,7 @@ class ClientGameApp:
         self.root.after(DT, self.update)
 
     def start_game(self):
-        cmd = 'python server.py'
+        cmd = 'python3 server.py'
         subprocess.Popen(cmd, shell=True)
 
 
@@ -335,6 +335,6 @@ app.draw_action_bar()
 # app.animate_object(a.client_id, 4, 4, 1000)
 # app.animate_object(a.client_id, 2, 2, 1000)
 #app.field.delete(a.canvas_id)
-#app.start_game()
+app.start_game()
 app.update()
 app.root.mainloop()
