@@ -232,7 +232,7 @@ class GameApp:
                 spell_number = int((self.action_state.split())[1])
                 spell = spell_book[spell_number]
                 message = 'set_action ' + str(spell_number)
-                con.write_message('server', message)
+                con.write_message_server(self.conn_1, self.conn_2, message)
                 if spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
                     if turn == 'player1':
                         message = 'draw_range_circle ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + str(

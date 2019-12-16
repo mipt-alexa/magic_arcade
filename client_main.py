@@ -333,6 +333,7 @@ def main():
     app.draw_grid()
     app.draw_bars()
     app.draw_turn()
+    app.draw_action_bar()
     #app.draw_range_circle(5, 5, 1)
     # a = Object()
     # a.img_id = 1
