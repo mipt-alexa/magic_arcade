@@ -18,7 +18,6 @@ def start_connection_client():
     file_host = open("host.txt", 'r', encoding = 'utf-8')
     host = file_host.readline()
     file_host.close()
-    print(host)
     conn = socket.socket()
     conn.connect((host, 14900))
     conn.setblocking(True)
