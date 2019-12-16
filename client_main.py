@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 import images as img
 import subprocess
 import Spell_book as sb
+from playsound import playsound
 ANIM_DT = 10
 DT = 30
 """тик времени"""
@@ -53,6 +54,7 @@ def send_message(message):
 
 def click_processing(event):
     """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
+    # playsound('sounds/select.wav')
     event_x = event.x // 34
     event_y = event.y // 34
     message_to_server = 'click ' + str(event_x) + ' ' + str(event_y) + ' '
@@ -65,6 +67,9 @@ def key_processing(event):
     message_to_server = 'key ' + key
     send_message(message_to_server)
 
+
+def play_sound(sound):
+    playsound('sounds/' + sound + '.wav', False)
 
 class Object:
     """
@@ -259,6 +264,7 @@ class ClientGameApp:
                 self.field.delete(self.objects[a.client_id].canvas_id)
             a.canvas_id = self.draw_object(a, 'field')
             self.objects[a.client_id] = a
+        print(list_of_words)
         if list_of_words[0] == 'del':
             self.field.delete(self.objects[int(list_of_words[1])].canvas_id)
             del self.objects[int(list_of_words[1])]
@@ -278,6 +284,9 @@ class ClientGameApp:
             self.end_game(list_of_words[1])
         if list_of_words[0] == 'set_action':
             self.set_action(int(list_of_words[1]))
+        if list_of_words[0] == 'play_sound':
+            print(list_of_words[1])
+            play_sound(list_of_words[1])
 
     def draw_grid(self):
         """Рисует сетку и камушки"""

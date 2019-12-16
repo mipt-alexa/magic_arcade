@@ -70,6 +70,8 @@ class GameApp:
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     self.mage1.cast_spell(spell)
                     self.mage2.catch_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message('server', message)
                     message = 'set_health ' + 'player2 ' + str(self.mage2.health)
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
@@ -85,6 +87,8 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message('server', message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
@@ -101,10 +105,10 @@ class GameApp:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage1):
-                    print("@")
                     self.mage2.cast_spell(spell)
                     self.mage1.catch_spell(spell)
-                    print(self.mage1.health)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message('server', message)
                     message = 'set_health ' + 'player1 ' + str(self.mage1.health)
                     con.write_message('server', message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
@@ -120,6 +124,8 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage2.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message('server', message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message('server', message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
@@ -134,6 +140,8 @@ class GameApp:
             if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
                                       self.mage2):
                 self.mage1.cast_spell(spell)
+                message = 'play_sound ' + spell.sound
+                con.write_message('server', message)
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message('server', message)
                 self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
@@ -145,6 +153,8 @@ class GameApp:
             if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
                                       self.mage2):
                 self.mage2.cast_spell(spell)
+                message = 'play_sound ' + spell.sound
+                con.write_message('server', message)
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message('server', message)
                 self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
@@ -198,6 +208,8 @@ class GameApp:
                 con.write_message('server', message)
             elif splitted_message[1] == 't':
                 message = 'del_range_circle'
+                con.write_message('server', message)
+                message = 'set_action ' + '0'
                 con.write_message('server', message)
                 self.action_state = 'walk'
                 if self.game_status == 'player1_turn':
