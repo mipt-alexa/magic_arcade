@@ -66,7 +66,7 @@ def write_message_server(conn_1, conn_2, message):
     
 """
 Заготовка для сообщения о определении клиентом правый он оли левый
-
+"""
 def write_side_of_client(conn, x):
     message = x  # 2 - правый, 1 - левый, можешь вписать что захочешь
     message += " "
@@ -75,4 +75,3 @@ def write_side_of_client(conn, x):
     print("write " + message)  #exp
     message_encode = message.encode("utf-8")
     conn.send(message_encode)
-"""

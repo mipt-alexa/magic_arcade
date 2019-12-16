@@ -62,11 +62,8 @@ class GameApp:
         else:
             message = 'set_turn ' + 'player1'
         con.write_message_server(self.conn_1, self.conn_2, message)
-        """
-        Заготовка для сообщения об определении стороны клиенту
-        con.write_side_of_client(conn_1, 1)
-        con.write_side_of_client(conn_2, 2)
-        """
+        con.write_side_of_client(self.conn_1, 'side left')
+        con.write_side_of_client(self.conn_2, 'side right')
 
         
     def attack(self, turn, spell, click_x, click_y):

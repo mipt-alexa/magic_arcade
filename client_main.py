@@ -146,6 +146,12 @@ class ClientGameApp:
         screen_y2 = y2 * cell_size
         self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
 
+    def set_side(self, side):
+        if side == 'left':
+           self.interface.create_rectangle(55, 55, 55 + cell_size, 55 + cell_size, outline='green')
+        elif side == 'right':
+            self.interface.create_rectangle(window_width - 55, 55, window_width - 55 - cell_size, 55 + cell_size, outline='green')
+
     def move(self, obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
         cr_time += ANIM_DT
         x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
@@ -158,8 +164,6 @@ class ClientGameApp:
             self.root.after(ANIM_DT, lambda: self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
         else:
             self.bind_all()
-        #     self.objects[obj_id].set_coords(screen_x2, screen_y2)
-        #     self.draw_object(self.objects[obj_id], 'field')
 
     def draw_action_bar(self):
         x0 = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8)
@@ -300,7 +304,8 @@ class ClientGameApp:
         if list_of_words[0] == 'play_sound':
             print(list_of_words[1])
             play_sound(list_of_words[1])
-
+        if list_of_words[0] == 'side':
+            self.set_side(list_of_words[1])
 
             
     def draw_grid(self):
@@ -337,19 +342,6 @@ def main():
     app.draw_bars()
     app.draw_turn()
     app.draw_action_bar()
-    #app.draw_range_circle(5, 5, 1)
-    # a = Object()
-    # a.img_id = 1
-    # a.x = 4 * cell_size
-    # a.y = 5 * cell_size
-    # a.canvas_id = app.draw_object(a, 'field')
-    # app.animate_object(a, 2, 1, 1000)
-    # time.sleep(1)
-    # app.animate_object(a, 3, 10, 1000)
-    #app.field.delete(a.canvas_id)
-    # img2 = img.get_image(4) #test
-    # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-    #app.start_game()
     app.update()
     app.root.mainloop()
 
