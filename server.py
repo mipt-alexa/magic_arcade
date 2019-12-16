@@ -171,6 +171,8 @@ class GameApp:
             if turn == 'player1':
                 if self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
+                    message = 'play_sound ' + 'walk'
+                    con.write_message('server', message)
                     # message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) \
                     #         + ' ' + self.mage1.image_id
                     # con.write_message('server', message)
@@ -182,6 +184,8 @@ class GameApp:
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
+                    message = 'play_sound ' + 'walk'
+                    con.write_message('server', message)
                     # message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) \
                     #         + ' ' + self.mage2.image_id
                     # con.write_message('server', message)
