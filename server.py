@@ -7,7 +7,6 @@ from Spell_book import spell_book
 from random import choice
 
 
-
 root = tk.Tk()
 DT = 50
 
@@ -173,9 +172,6 @@ class GameApp:
             if turn == 'player1':
                 if self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
-                    message = 'obj ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(self.mage1.y) \
-                              + ' ' + self.mage1.image_id
-                    con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'animate ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(
@@ -184,9 +180,6 @@ class GameApp:
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
-                    message = 'obj ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(self.mage2.y) \
-                              + ' ' + self.mage2.image_id
-                    con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'animate ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(
@@ -233,7 +226,7 @@ class GameApp:
                 spell_number = int((self.action_state.split())[1])
                 spell = spell_book[spell_number]
                 message = 'set_action ' + str(spell_number)
-                con.write_message('server', message)
+                con.write_message_server(self.conn_1, self.conn_2, message)
                 if spell.spell_type == 'attack_directed' or spell.spell_type == 'defend_directed':
                     if turn == 'player1':
                         message = 'draw_range_circle ' + str(self.mage1.x) + ' ' + str(self.mage1.y) + ' ' + str(
