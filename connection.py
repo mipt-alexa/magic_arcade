@@ -1,31 +1,78 @@
-﻿#! /usr/bin/env python
+#! /usr/bin/env python
 # -*- coding: utf-8 -*-
-def read_message(who):  # who - кто сообщение вызывает
-    # принимает значения: "client", "server" 
+import socket
+
+
+PORT = 14900
+
+
+def start_connection_server():
+    print("начало настройки связи")
+    socket_server = socket.socket()
+    socket_server.bind( ("", PORT) )
+    socket_server.listen(2)
+    conn_1, addr_1 = socket_server.accept()
+    conn_2, addr_2 = socket_server.accept()
+    return [conn_1, conn_2]
+    
+    
+def start_connection_client():
+    file_host = open("host.txt", 'r', encoding = 'utf-8')
+    host = file_host.readline()
+    file_host.close()
+    conn = socket.socket()
+    conn.connect((host, 14900))
+    conn.setblocking(True)
+    return conn
+
+
+def read_message(conn):  
     """
     Отвечает за чтение сообщения
     """
-    other = return_other(who)
-    file_for_reading = open("{}_message.txt".format(other),'r',encoding = 'utf-8')
-    message = file_for_reading.readlines()
-    clining = open("{}_message.txt".format(other),'w')
-    file_for_reading.close()
-    clining.close()
-    return message
+    try:
+        conn.settimeout(0.04)
+        message = conn.recv(100)
+        message_decode = message.decode("utf-8")
+        print("read " + message_decode)  #exp
+    except Exception:
+        message_decode = ''
+    return message_decode
 
 
-def write_message(who, message):  # message - сообщение, которое необходимо передать клиенту, who - кто сообщение вызывает
-    # принимает значения: "client", "server" 
+def write_message_client(conn, message):  
     """
-    Отвечает за создание сообщения
+    Отвечает за отправку сообщения клиентом серверу
     """
-    file_for_write = open("{}_message.txt".format(who),'a')
-    file_for_write.write(str(message) + '\n')
-    file_for_write.close
+    message += " "
+    for i in range(100 - len(message)):
+        message += "/"
+    print("write " + message)  #exp
+    message_encode = message.encode("utf-8")
+    conn.send(message_encode)
     
+    
+def write_message_server(conn_1, conn_2, message):  
+    """
+    Отвечает за отправку сообщения сервером обеим клиентам
+    """
+    message += " "
+    for i in range(100 - len(message)):
+        message += "/"
+    print("write " + message)  #exp
+    message_encode = message.encode("utf-8")
+    conn_1.send(message_encode)
+    conn_2.send(message_encode)
+    
+"""
+Заготовка для сообщения о определении клиентом правый он оли левый
 
-def return_other(who):
-    if who == "client":
-        return "server"
-    else:
-        return "client"
+def write_side_of_client(conn, x):
+    message = x  # 2 - правый, 1 - левый, можешь вписать что захочешь
+    message += " "
+    for i in range(100 - len(message)):
+        message += "/"
+    print("write " + message)  #exp
+    message_encode = message.encode("utf-8")
+    conn.send(message_encode)
+"""

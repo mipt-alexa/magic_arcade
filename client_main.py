@@ -9,11 +9,10 @@ import connection as con
 from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
-import subprocess
 import Spell_book as sb
 from playsound import playsound
 ANIM_DT = 10
-DT = 30
+DT = 50
 """тик времени"""
 header_font = "Arial-16"
 """Шрифт в заголовке"""
@@ -27,7 +26,24 @@ height = 15
 window_height = height * cell_size
 """Высота окна"""
 interface_height = 100
-import time
+
+
+
+class Object:
+    """
+    Класс объекта на экране
+    Хранит координаты в пикселях, id объекта как объекта на сервере, id картинки, id на canvas
+    """
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+        self.client_id = None
+        self.img_id = None
+        self.canvas_id = None
+
+
+def pass_event(event):
+    pass
 
 
 def pass_event(event):
@@ -37,19 +53,16 @@ def pass_event(event):
 def read_message():
     """
     считывает сообщение с сервера
-    :return:
     """
-    list_of_messages = con.read_message('client')
-    return list_of_messages
+    message = con.read_message(CONN)
+    return message
 
 
 def send_message(message):
     """
     отправляет данные на сервер
-    :param message:
-    :return:
     """
-    con.write_message('client', message)
+    con.write_message_client(CONN, message)
 
 
 def click_processing(event):
@@ -197,6 +210,7 @@ class ClientGameApp:
         self.field.delete(self.range_circle_id)
 
     def draw_bars(self):
+
         self.health_bar1_id = self.interface.create_line(0, 15, 200, 15, width=15, fill='red')
         self.health_bar2_id = self.interface.create_line(window_width - 200, 15, window_width, 15, width=15, fill='red')
         self.energy_bar1_id = self.interface.create_line(0, 35, 200, 35, width=15, fill='grey')
@@ -247,7 +261,6 @@ class ClientGameApp:
         label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
-
     # def del_object(self, canvas_id):
     #     self.field.delete(canvas_id)
 
@@ -288,6 +301,8 @@ class ClientGameApp:
             print(list_of_words[1])
             play_sound(list_of_words[1])
 
+
+            
     def draw_grid(self):
         """Рисует сетку и камушки"""
         for i in range(0, window_width // cell_size + 1, 1):
@@ -304,37 +319,40 @@ class ClientGameApp:
         self.root.bind('<Key>', pass_event)
 
     def update(self):
-        list_of_messages = read_message()
-        if len(list_of_messages) > 0:
-            for message in list_of_messages:
-                if message == '':
-                    continue
+        message = read_message()
+        if len(message) > 0:
+            if message == '':
+                pass
+            else:
                 self.process_message(message)
         self.root.after(DT, self.update)
 
-    def start_game(self):
-        cmd = 'python3 server.py'
-        subprocess.Popen(cmd, shell=True)
 
+def main():
+    app = ClientGameApp()
+    img.load_all_images(app)
 
-app = ClientGameApp()
-img.load_all_images(app)
+    app.bind_all()
+    app.draw_grid()
+    app.draw_bars()
+    app.draw_turn()
+    app.draw_action_bar()
+    #app.draw_range_circle(5, 5, 1)
+    # a = Object()
+    # a.img_id = 1
+    # a.x = 4 * cell_size
+    # a.y = 5 * cell_size
+    # a.canvas_id = app.draw_object(a, 'field')
+    # app.animate_object(a, 2, 1, 1000)
+    # time.sleep(1)
+    # app.animate_object(a, 3, 10, 1000)
+    #app.field.delete(a.canvas_id)
+    # img2 = img.get_image(4) #test
+    # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
+    #app.start_game()
+    app.update()
+    app.root.mainloop()
 
-app.bind_all()
-app.draw_grid()
-app.draw_bars()
-app.draw_turn()
-app.draw_action_bar()
-# a = Object()
-# a.img_id = 1
-# a.x = 1 * cell_size
-# a.y = 1 * cell_size
-# a.canvas_id = app.draw_object(a, 'field')
-# a.client_id = 1
-# app.objects[a.client_id] = a
-# app.animate_object(a.client_id, 4, 4, 1000)
-# app.animate_object(a.client_id, 2, 2, 1000)
-#app.field.delete(a.canvas_id)
-app.start_game()
-app.update()
-app.root.mainloop()
+"""константа связи, работает во всех случаях передачи и чтения сообщений"""
+CONN = con.start_connection_client()
+main()
