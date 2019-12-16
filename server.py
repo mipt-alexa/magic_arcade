@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 import BattleField_class as bf
 import Mage_class as mg
 import connection as con
