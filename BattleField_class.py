@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
 from Cells_classes import Cell, Obstacle
 
 
