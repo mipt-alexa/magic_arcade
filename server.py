@@ -91,11 +91,11 @@ class GameApp:
             if spell_target is not None and spell_target.type == 'Mage':
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     self.mage1.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message_server(self.conn_1, self.conn_2, message)
                     self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
                                                   spell.projectile_id)
                     self.mage2.catch_spell(spell)
-                    message = 'play_sound ' + spell.sound
-                    con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_health ' + 'player2 ' + str(self.mage2.health)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
@@ -111,10 +111,10 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
-                    self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
-                                                  spell.projectile_id)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
+                    self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
@@ -132,11 +132,11 @@ class GameApp:
             if spell_target is not None and spell_target.type == 'Mage':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage1):
                     self.mage2.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message_server(self.conn_1, self.conn_2, message)
                     self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
                                                   spell.projectile_id)
                     self.mage1.catch_spell(spell)
-                    message = 'play_sound ' + spell.sound
-                    con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_health ' + 'player1 ' + str(self.mage1.health)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
@@ -152,10 +152,10 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage2.cast_spell(spell)
-                    self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
-                                                  spell.projectile_id)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
+                    self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)

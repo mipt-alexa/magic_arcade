@@ -122,6 +122,7 @@ class ClientGameApp:
         self.action_number_ids = []
         self.action_bar_id = None
         self.action_cursor_id = None
+        self.side = None
 
     def draw_object(self, obj, canv):
         """
@@ -146,11 +147,21 @@ class ClientGameApp:
         screen_y2 = y2 * cell_size
         self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
 
+    def delete_action_bar(self):
+        for id in self.action_ids:
+            self.interface.delete(id)
+        for id in self.action_number_ids:
+            self.interface.delete(id)
+        self.interface.delete(self.action_bar_id)
+        self.interface.delete(self.action_cursor_id)
+
     def set_side(self, side):
         if side == 'left':
-           self.interface.create_rectangle(55, 55, 55 + cell_size, 55 + cell_size, outline='green')
+            self.interface.create_rectangle(55, 55, 55 + cell_size, 55 + cell_size, outline='green')
+            self.side = 'left'
         elif side == 'right':
             self.interface.create_rectangle(window_width - 55, 55, window_width - 55 - cell_size, 55 + cell_size, outline='green')
+            self.side = 'right'
 
     def move(self, obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
         cr_time += ANIM_DT
@@ -255,10 +266,19 @@ class ClientGameApp:
 
     def end_game(self, winner):
         self.unbind_all()
+        self.delete_action_bar()
         if winner == 'player1':
             phrase = 'Player 1 won!'
+            if self.side == 'left':
+                play_sound('win')
+            else:
+                play_sound('lose')
         elif winner == 'player2':
             phrase = 'Player 2 won!'
+            if self.side == 'right':
+                play_sound('win')
+            else:
+                play_sound('lose')
         label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
