@@ -10,9 +10,7 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 import Spell_book as sb
-
-
-
+from playsound import playsound
 ANIM_DT = 10
 DT = 50
 """тик времени"""
@@ -69,6 +67,7 @@ def send_message(message):
 
 def click_processing(event):
     """Обрабывает данные от клика. Дописывает в строку, строку добавляет в массив """
+    # playsound('sounds/select.wav')
     event_x = event.x // 34
     event_y = event.y // 34
     message_to_server = 'click ' + str(event_x) + ' ' + str(event_y) + ' '
@@ -81,6 +80,9 @@ def key_processing(event):
     message_to_server = 'key ' + key
     send_message(message_to_server)
 
+
+def play_sound(sound):
+    playsound('sounds/' + sound + '.wav', False)
 
 class Object:
     """
@@ -120,6 +122,7 @@ class ClientGameApp:
         self.action_number_ids = []
         self.action_bar_id = None
         self.action_cursor_id = None
+        self.side = None
 
     def draw_object(self, obj, canv):
         """
@@ -144,6 +147,22 @@ class ClientGameApp:
         screen_y2 = y2 * cell_size
         self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, 0)
 
+    def delete_action_bar(self):
+        for id in self.action_ids:
+            self.interface.delete(id)
+        for id in self.action_number_ids:
+            self.interface.delete(id)
+        self.interface.delete(self.action_bar_id)
+        self.interface.delete(self.action_cursor_id)
+
+    def set_side(self, side):
+        if side == 'left':
+            self.interface.create_rectangle(55, 55, 55 + cell_size, 55 + cell_size, outline='green')
+            self.side = 'left'
+        elif side == 'right':
+            self.interface.create_rectangle(window_width - 55, 55, window_width - 55 - cell_size, 55 + cell_size, outline='green')
+            self.side = 'right'
+
     def move(self, obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time):
         cr_time += ANIM_DT
         x = screen_x1 + (screen_x2 - screen_x1) * cr_time / animation_time
@@ -156,13 +175,10 @@ class ClientGameApp:
             self.root.after(ANIM_DT, lambda: self.move(obj_id, screen_x1, screen_y1, screen_x2, screen_y2, animation_time, cr_time))
         else:
             self.bind_all()
-        #     self.objects[obj_id].set_coords(screen_x2, screen_y2)
-        #     self.draw_object(self.objects[obj_id], 'field')
 
     def draw_action_bar(self):
         x0 = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8)
         self.action_bar_id = self.interface.create_rectangle(x0, 55 + 32, x0 + 2 * len(sb.spell_book) / 2 * (32 + 8), 55, outline='red')
-        print(x0)
         spell_img = Object()
         spell_img.img_id = 'walk'
         spell_img.x = x0
@@ -200,7 +216,6 @@ class ClientGameApp:
         screen_x = (x + 1) * cell_size - 17
         screen_y = (y + 1) * cell_size - 17
         screen_r = spell_range * cell_size
-        print(screen_x, screen_y, screen_r)
         self.range_circle_id = self.field.create_oval(screen_x - screen_r, screen_y - screen_r, screen_x + screen_r,
                                                       screen_y + screen_r, outline='red', width=4)
 
@@ -251,17 +266,24 @@ class ClientGameApp:
 
     def end_game(self, winner):
         self.unbind_all()
+        self.delete_action_bar()
         if winner == 'player1':
             phrase = 'Player 1 won!'
+            if self.side == 'left':
+                play_sound('win')
+            else:
+                play_sound('lose')
         elif winner == 'player2':
             phrase = 'Player 2 won!'
-        print(phrase)
+            if self.side == 'right':
+                play_sound('win')
+            else:
+                play_sound('lose')
         label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
     # def del_object(self, canvas_id):
     #     self.field.delete(canvas_id)
-
 
     def process_message(self, message):
         """Строку от сервера делит на слова, созвдает объеты класса Obj, записывает признаки"""
@@ -295,7 +317,10 @@ class ClientGameApp:
             self.end_game(list_of_words[1])
         if list_of_words[0] == 'set_action':
             self.set_action(int(list_of_words[1]))
-
+        if list_of_words[0] == 'play_sound':
+            play_sound(list_of_words[1])
+        if list_of_words[0] == 'side':
+            self.set_side(list_of_words[1])
 
             
     def draw_grid(self):
@@ -322,10 +347,6 @@ class ClientGameApp:
                 self.process_message(message)
         self.root.after(DT, self.update)
 
-    def start_game(self):
-        cmd = 'python server.py'
-        subprocess.Popen(cmd, shell=True)
-
 
 def main():
     app = ClientGameApp()
@@ -336,19 +357,6 @@ def main():
     app.draw_bars()
     app.draw_turn()
     app.draw_action_bar()
-    #app.draw_range_circle(5, 5, 1)
-    # a = Object()
-    # a.img_id = 1
-    # a.x = 4 * cell_size
-    # a.y = 5 * cell_size
-    # a.canvas_id = app.draw_object(a, 'field')
-    # app.animate_object(a, 2, 1, 1000)
-    # time.sleep(1)
-    # app.animate_object(a, 3, 10, 1000)
-    #app.field.delete(a.canvas_id)
-    # img2 = img.get_image(4) #test
-    # pp.field.create_image(34, 34, anchor=NW, image=img2) #test
-    #app.start_game()
     app.update()
     app.root.mainloop()
 

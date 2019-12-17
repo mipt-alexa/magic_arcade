@@ -7,7 +7,7 @@ import tkinter as tk
 import time
 from Spell_book import spell_book
 from random import choice
-
+import Spell_classes as sp
 
 root = tk.Tk()
 DT = 50
@@ -62,13 +62,23 @@ class GameApp:
         else:
             message = 'set_turn ' + 'player1'
         con.write_message_server(self.conn_1, self.conn_2, message)
-        """
-        Заготовка для сообщения об определении стороны клиенту
-        con.write_side_of_client(conn_1, 1)
-        con.write_side_of_client(conn_2, 2)
-        """
+        con.write_side_of_client(self.conn_1, 'side left')
+        con.write_side_of_client(self.conn_2, 'side right')
 
-        
+    def send_projectile_commands(self, x1, y1, x2, y2, image_id):
+        projectile = sp.Projectile(x1, y1, image_id, self.id_giver.new_id())
+        message = 'obj ' + str(projectile.client_id) + ' ' + str(projectile.x) + ' ' + str(projectile.y) + ' ' \
+                  + str('fire_projectile')
+        con.write_message_server(self.conn_1, self.conn_2, message)
+        r = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+        animation_time = int(r * 25)
+        message = 'animate ' + str(projectile.client_id) + ' ' + str(x2) + ' ' + str(
+            y2) + ' ' + str(animation_time)
+        con.write_message_server(self.conn_1, self.conn_2, message)
+        time.sleep(5 * animation_time/1000)
+        message = 'del ' + str(projectile.client_id)
+        con.write_message_server(self.conn_1, self.conn_2, message)
+
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
@@ -79,9 +89,12 @@ class GameApp:
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
-                print(self.battle_field.obstacles)
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     self.mage1.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message_server(self.conn_1, self.conn_2, message)
+                    self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     self.mage2.catch_spell(spell)
                     message = 'set_health ' + 'player2 ' + str(self.mage2.health)
                     con.write_message_server(self.conn_1, self.conn_2, message)
@@ -98,6 +111,10 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message_server(self.conn_1, self.conn_2, message)
+                    self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
@@ -114,10 +131,12 @@ class GameApp:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage1):
-                    print("@")
                     self.mage2.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message_server(self.conn_1, self.conn_2, message)
+                    self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     self.mage1.catch_spell(spell)
-                    print(self.mage1.health)
                     message = 'set_health ' + 'player1 ' + str(self.mage1.health)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
@@ -133,6 +152,10 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage2.cast_spell(spell)
+                    message = 'play_sound ' + spell.sound
+                    con.write_message_server(self.conn_1, self.conn_2, message)
+                    self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     is_broken = self.battle_field.obstacles[click_y][click_x].take_damage(spell.health_damage)
@@ -142,15 +165,15 @@ class GameApp:
                         self.battle_field.delete_obstacle(click_x, click_y)
 
     def defend(self, turn, spell, click_x, click_y):
-        print("defend")
         if turn == 'player1':
             if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
                                       self.mage2):
                 self.mage1.cast_spell(spell)
+                message = 'play_sound ' + spell.sound
+                con.write_message_server(self.conn_1, self.conn_2, message)
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message_server(self.conn_1, self.conn_2, message)
                 self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
-                print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
                 con.write_message_server(self.conn_1, self.conn_2, message)
@@ -158,13 +181,13 @@ class GameApp:
             if self.mage2.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
                                       self.mage2):
                 self.mage2.cast_spell(spell)
+                message = 'play_sound ' + spell.sound
+                con.write_message_server(self.conn_1, self.conn_2, message)
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message_server(self.conn_1, self.conn_2, message)
                 self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
-                print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
-                print(message)
                 con.write_message_server(self.conn_1, self.conn_2, message)
 
     def process_click_message(self, turn, splitted_message): 
@@ -174,6 +197,8 @@ class GameApp:
             if turn == 'player1':
                 if self.mage1.check_move(click_x, click_y, self.battle_field.obstacles, self.mage2):
                     self.mage1.move(click_x - self.mage1.x, click_y - self.mage1.y)
+                    message = 'play_sound ' + 'walk'
+                    con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'animate ' + str(self.mage1.client_id) + ' ' + str(self.mage1.x) + ' ' + str(
@@ -182,6 +207,8 @@ class GameApp:
             if turn == 'player2':
                 if self.mage2.check_move(click_x, click_y, self.battle_field.obstacles, self.mage1):
                     self.mage2.move(click_x - self.mage2.x, click_y - self.mage2.y)
+                    message = 'play_sound ' + 'walk'
+                    con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'animate ' + str(self.mage2.client_id) + ' ' + str(self.mage2.x) + ' ' + str(
@@ -205,6 +232,8 @@ class GameApp:
                 con.write_message_server(self.conn_1, self.conn_2, message)
             elif splitted_message[1] == 't':
                 message = 'del_range_circle'
+                con.write_message_server(self.conn_1, self.conn_2, message)
+                message = 'set_action ' + '0'
                 con.write_message_server(self.conn_1, self.conn_2, message)
                 self.action_state = 'walk'
                 if self.game_status == 'player1_turn':

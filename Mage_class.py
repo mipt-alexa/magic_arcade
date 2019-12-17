@@ -40,7 +40,6 @@ class Mage:
         self.image_id = None
 
     def move(self, dx, dy):
-        if self.energy >= STEP_ENERGY:
             self.x += dx
             self.y += dy
             self.energy -= STEP_ENERGY
@@ -49,8 +48,7 @@ class Mage:
         print(5) #exp
         if (abs(click_x - self.x) == 1 and abs(click_y - self.y) == 0) or (
                 abs(click_x - self.x) == 0 and abs(click_y - self.y) == 1):
-            print(6) #exp
-            if obstacles[click_y][click_x] is None and not (click_x == another_mage.x and click_y == another_mage.y):
+            if obstacles[click_y][click_x] is None and not (click_x == another_mage.x and click_y == another_mage.y) and self.energy >= STEP_ENERGY:
                 return True
             else:
                 print(7) #exp
