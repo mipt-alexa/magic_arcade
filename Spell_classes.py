@@ -26,16 +26,19 @@ class DirectSpell(Spell):
         self.spell_range = spell_range
 
 
+
 class AttackDirectSpell(DirectSpell):
     """
     Направленное заклинание, наносящее урон
     """
-    def __init__(self, name, energy, menu_image_id, sound, spell_range, health_damage, energy_damage, destination):
+    def __init__(self, name, energy, menu_image_id, sound, spell_range, health_damage, energy_damage, destination,
+                 projectile_id):
         super().__init__(name, energy, menu_image_id, sound, spell_range)
         self.spell_type = 'attack_directed'
         self.destination = destination # тип объекта на который может быть направленно заклинание(Mage, Obstacle, Both)
         self.health_damage = health_damage
         self.energy_damage = energy_damage
+        self.projectile_id = projectile_id
 
 
 class DefendDirectSpell(DirectSpell):

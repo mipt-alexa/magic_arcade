@@ -75,7 +75,7 @@ class GameApp:
         message = 'animate ' + str(projectile.client_id) + ' ' + str(x2) + ' ' + str(
             y2) + ' ' + str(animation_time)
         con.write_message_server(self.conn_1, self.conn_2, message)
-        time.sleep(3 * animation_time/1000)
+        time.sleep(5 * animation_time/1000)
         message = 'del ' + str(projectile.client_id)
         con.write_message_server(self.conn_1, self.conn_2, message)
 
@@ -92,7 +92,7 @@ class GameApp:
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     self.mage1.cast_spell(spell)
                     self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
-                                                  'fire_projectile')
+                                                  spell.projectile_id)
                     self.mage2.catch_spell(spell)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
@@ -111,6 +111,8 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage1.cast_spell(spell)
+                    self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
@@ -130,6 +132,8 @@ class GameApp:
             if spell_target is not None and spell_target.type == 'Mage':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage1):
                     self.mage2.cast_spell(spell)
+                    self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     self.mage1.catch_spell(spell)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
@@ -148,6 +152,8 @@ class GameApp:
             elif spell_target is not None and spell_target.type == 'Obstacle':
                 if self.mage2.check_spell(spell, self.battle_field.obstacles, spell_target):
                     self.mage2.cast_spell(spell)
+                    self.send_projectile_commands(self.mage2.x, self.mage2.y, spell_target.x, spell_target.y,
+                                                  spell.projectile_id)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
                     message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
