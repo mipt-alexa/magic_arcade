@@ -168,7 +168,6 @@ class ClientGameApp:
     def draw_action_bar(self):
         x0 = window_width / 2 - len(sb.spell_book) / 2 * (32 + 8)
         self.action_bar_id = self.interface.create_rectangle(x0, 55 + 32, x0 + 2 * len(sb.spell_book) / 2 * (32 + 8), 55, outline='red')
-        print(x0)
         spell_img = Object()
         spell_img.img_id = 'walk'
         spell_img.x = x0
@@ -206,7 +205,6 @@ class ClientGameApp:
         screen_x = (x + 1) * cell_size - 17
         screen_y = (y + 1) * cell_size - 17
         screen_r = spell_range * cell_size
-        print(screen_x, screen_y, screen_r)
         self.range_circle_id = self.field.create_oval(screen_x - screen_r, screen_y - screen_r, screen_x + screen_r,
                                                       screen_y + screen_r, outline='red', width=4)
 
@@ -261,7 +259,6 @@ class ClientGameApp:
             phrase = 'Player 1 won!'
         elif winner == 'player2':
             phrase = 'Player 2 won!'
-        print(phrase)
         label = Label(self.root, text=phrase, fg='red', bg='black', font="Arial 20")
         label.pack()
         label_window = self.interface.create_window(window_width/2 - 70, 55, anchor=NW, window=label)
@@ -281,7 +278,6 @@ class ClientGameApp:
                 self.field.delete(self.objects[a.client_id].canvas_id)
             a.canvas_id = self.draw_object(a, 'field')
             self.objects[a.client_id] = a
-        print(list_of_words)
         if list_of_words[0] == 'del':
             self.field.delete(self.objects[int(list_of_words[1])].canvas_id)
             del self.objects[int(list_of_words[1])]
@@ -302,7 +298,6 @@ class ClientGameApp:
         if list_of_words[0] == 'set_action':
             self.set_action(int(list_of_words[1]))
         if list_of_words[0] == 'play_sound':
-            print(list_of_words[1])
             play_sound(list_of_words[1])
         if list_of_words[0] == 'side':
             self.set_side(list_of_words[1])

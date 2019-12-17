@@ -34,7 +34,6 @@ def read_message(conn):
         conn.settimeout(0.04)
         message = conn.recv(100)
         message_decode = message.decode("utf-8")
-        print("read " + message_decode)  #exp
     except Exception:
         message_decode = ''
     return message_decode
@@ -47,7 +46,6 @@ def write_message_client(conn, message):
     message += " "
     for i in range(100 - len(message)):
         message += "/"
-    print("write " + message)  #exp
     message_encode = message.encode("utf-8")
     conn.send(message_encode)
     
@@ -59,7 +57,6 @@ def write_message_server(conn_1, conn_2, message):
     message += " "
     for i in range(100 - len(message)):
         message += "/"
-    print("write " + message)  #exp
     message_encode = message.encode("utf-8")
     conn_1.send(message_encode)
     conn_2.send(message_encode)
@@ -72,6 +69,5 @@ def write_side_of_client(conn, x):
     message += " "
     for i in range(100 - len(message)):
         message += "/"
-    print("write " + message)  #exp
     message_encode = message.encode("utf-8")
     conn.send(message_encode)

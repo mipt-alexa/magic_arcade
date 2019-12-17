@@ -7,7 +7,7 @@ import tkinter as tk
 import time
 from Spell_book import spell_book
 from random import choice
-
+import Spell_classes as sp
 
 root = tk.Tk()
 DT = 50
@@ -65,7 +65,20 @@ class GameApp:
         con.write_side_of_client(self.conn_1, 'side left')
         con.write_side_of_client(self.conn_2, 'side right')
 
-        
+    def send_projectile_commands(self, x1, y1, x2, y2, image_id):
+        projectile = sp.Projectile(x1, y1, image_id, self.id_giver.new_id())
+        message = 'obj ' + str(projectile.client_id) + ' ' + str(projectile.x) + ' ' + str(projectile.y) + ' ' \
+                  + str('fire_projectile')
+        con.write_message_server(self.conn_1, self.conn_2, message)
+        r = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+        animation_time = int(r * 25)
+        message = 'animate ' + str(projectile.client_id) + ' ' + str(x2) + ' ' + str(
+            y2) + ' ' + str(animation_time)
+        con.write_message_server(self.conn_1, self.conn_2, message)
+        time.sleep(3 * animation_time/1000)
+        message = 'del ' + str(projectile.client_id)
+        con.write_message_server(self.conn_1, self.conn_2, message)
+
     def attack(self, turn, spell, click_x, click_y):
         if turn == 'player1':
             spell_target = None
@@ -76,9 +89,10 @@ class GameApp:
             if self.battle_field.obstacles[click_y][click_x] is not None:
                 spell_target = self.battle_field.obstacles[click_y][click_x]
             if spell_target is not None and spell_target.type == 'Mage':
-                print(self.battle_field.obstacles)
                 if self.mage1.check_spell(spell, self.battle_field.obstacles, spell_target, self.mage2):
                     self.mage1.cast_spell(spell)
+                    self.send_projectile_commands(self.mage1.x, self.mage1.y, spell_target.x, spell_target.y,
+                                                  'fire_projectile')
                     self.mage2.catch_spell(spell)
                     message = 'play_sound ' + spell.sound
                     con.write_message_server(self.conn_1, self.conn_2, message)
@@ -145,7 +159,6 @@ class GameApp:
                         self.battle_field.delete_obstacle(click_x, click_y)
 
     def defend(self, turn, spell, click_x, click_y):
-        print("defend")
         if turn == 'player1':
             if self.mage1.check_spell(spell, self.battle_field.obstacles, self.battle_field.field[click_y][click_x],
                                       self.mage2):
@@ -155,7 +168,6 @@ class GameApp:
                 message = 'set_energy ' + 'player1 ' + str(self.mage1.energy)
                 con.write_message_server(self.conn_1, self.conn_2, message)
                 self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
-                print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
                 con.write_message_server(self.conn_1, self.conn_2, message)
@@ -168,10 +180,8 @@ class GameApp:
                 message = 'set_energy ' + 'player2 ' + str(self.mage2.energy)
                 con.write_message_server(self.conn_1, self.conn_2, message)
                 self.battle_field.create_obstacle(click_x, click_y, self.id_giver, spell.obstacle_health)
-                print(self.battle_field.obstacles[click_y][click_x])
                 message = 'obj ' + str(self.battle_field.obstacles[click_y][click_x].client_id) + ' ' + str(click_x) + \
                           ' ' + str(click_y) + ' ' + self.battle_field.obstacles[click_y][click_x].image_id
-                print(message)
                 con.write_message_server(self.conn_1, self.conn_2, message)
 
     def process_click_message(self, turn, splitted_message): 

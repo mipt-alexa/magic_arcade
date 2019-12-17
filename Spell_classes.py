@@ -56,3 +56,12 @@ class StateSpell(Spell):
         super().__init__(name, energy, menu_image_id, sound)
         self.spell_type = 'state'
 
+
+class Projectile:
+    def __init__(self, x, y, image_id, client_id):
+        self.x = x
+        self.y = y
+        self.image_id = image_id
+        self.client_id = client_id
+
+
