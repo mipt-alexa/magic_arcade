@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import subprocess
+import time
 print("Запустить игру или присоединиться? (1 или 2)")
 answer = input()
 if answer == "1":
@@ -10,6 +11,7 @@ if answer == "1":
     file_host.write("{}".format(host))
     file_host.close()
     subprocess.Popen('python3 server.py', shell=True)
+    time.sleep(2)
     subprocess.Popen('python3 client_main.py', shell=True)
 else:
     print("Напишите host сервера")
