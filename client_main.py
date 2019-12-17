@@ -10,7 +10,7 @@ from Mage_class import BASIC_ENERGY, BASIC_HEALTH
 from PIL import Image, ImageTk
 import images as img
 import Spell_book as sb
-from playsound import playsound
+#from playsound import playsound
 ANIM_DT = 10
 DT = 50
 """тик времени"""
@@ -82,7 +82,8 @@ def key_processing(event):
 
 
 def play_sound(sound):
-    playsound('sounds/' + sound + '.wav', False)
+    pass
+    #playsound('sounds/' + sound + '.wav', False)
 
 class Object:
     """
